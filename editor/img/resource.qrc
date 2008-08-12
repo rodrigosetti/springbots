@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/acoes" >
+        <file>about.png</file>
+        <file>edit.png</file>
+        <file>gravity.png</file>
+        <file>icone.png</file>
+        <file>kill.png</file>
+        <file>load.png</file>
+        <file>mass-center.png</file>
+        <file>mutate.png</file>
+        <file>names.png</file>
+        <file>quit.png</file>
+        <file>random.png</file>
+        <file>save.png</file>
+    </qresource>
+</RCC>

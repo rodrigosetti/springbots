@@ -1,0 +1,18 @@
+<!ELEMENT springbots (springbot+)>
+<!ELEMENT springbot (node+,spring*)>
+<!ELEMENT node EMPTY>
+<!ELEMENT spring EMPTY>
+
+<!ATTLIST springbot name CDATA #IMPLIED>
+<!ATTLIST springbot adapted CDATA #IMPLIED>
+<!ATTLIST springbot generation CDATA "0">
+<!ATTLIST springbot angle CDATA "0">
+
+<!ATTLIST node id ID #REQUIRED>
+<!ATTLIST node pos CDATA #REQUIRED>
+
+<!ATTLIST spring from IDREF #REQUIRED>
+<!ATTLIST spring to IDREF #REQUIRED>
+<!ATTLIST spring offset CDATA "3.1415">
+<!ATTLIST spring amplitude CDATA "0">
+

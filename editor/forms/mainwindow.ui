@@ -1,0 +1,409 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>878</width>
+    <height>605</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>640</width>
+    <height>480</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>NetLinks Sand Box</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="../img/resource.qrc" >:/acoes/icone.png</iconset>
+  </property>
+  <property name="toolButtonStyle" >
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QVBoxLayout" >
+    <item>
+     <widget class="QWidget" native="1" name="widget" >
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="Space" native="1" name="space" >
+         <property name="palette" >
+          <palette>
+           <active>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="cursor" >
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="autoFillBackground" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Senoide" native="1" name="senoide" >
+         <property name="maximumSize" >
+          <size>
+           <width>200</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="palette" >
+          <palette>
+           <active>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="cursor" >
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="autoFillBackground" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>878</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMain_menu" >
+    <property name="title" >
+     <string>&amp;Springbots</string>
+    </property>
+    <addaction name="loadSpringbotsAct" />
+    <addaction name="saveSpringbotsAct" />
+    <addaction name="newRandomAct" />
+    <addaction name="killSpringbotAct" />
+    <addaction name="mutateAct" />
+   </widget>
+   <widget class="QMenu" name="menu_Program" >
+    <property name="title" >
+     <string>&amp;Main</string>
+    </property>
+    <addaction name="aboutAct" />
+    <addaction name="quitProgramAct" />
+   </widget>
+   <widget class="QMenu" name="menu_World" >
+    <property name="title" >
+     <string>&amp;World</string>
+    </property>
+    <addaction name="toggleGravityAct" />
+    <addaction name="toggleEditModeAct" />
+   </widget>
+   <widget class="QMenu" name="menu_Options" >
+    <property name="title" >
+     <string>&amp;Options</string>
+    </property>
+    <addaction name="showMassCenterAct" />
+    <addaction name="showNamesAct" />
+   </widget>
+   <addaction name="menu_Program" />
+   <addaction name="menuMain_menu" />
+   <addaction name="menu_World" />
+   <addaction name="menu_Options" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="toggleGravityAct" />
+   <addaction name="toggleEditModeAct" />
+   <addaction name="showMassCenterAct" />
+   <addaction name="showNamesAct" />
+   <addaction name="separator" />
+   <addaction name="loadSpringbotsAct" />
+   <addaction name="saveSpringbotsAct" />
+   <addaction name="killSpringbotAct" />
+   <addaction name="changeNameAct" />
+   <addaction name="mutateAct" />
+   <addaction name="newRandomAct" />
+  </widget>
+  <action name="loadSpringbotsAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/load.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Load Springbots</string>
+   </property>
+  </action>
+  <action name="saveSpringbotsAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/save.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Save Springbots</string>
+   </property>
+  </action>
+  <action name="quitProgramAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/quit.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Quit program</string>
+   </property>
+  </action>
+  <action name="aboutAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/about.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Help and About</string>
+   </property>
+  </action>
+  <action name="toggleGravityAct" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/gravity.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Liquid</string>
+   </property>
+  </action>
+  <action name="toggleEditModeAct" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/edit.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Edit mode</string>
+   </property>
+  </action>
+  <action name="killSpringbotAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/kill.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Kill Springbot</string>
+   </property>
+  </action>
+  <action name="showMassCenterAct" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/mass-center.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Show &amp;Mass Center</string>
+   </property>
+  </action>
+  <action name="showNamesAct" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/names.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Show &amp;Names</string>
+   </property>
+  </action>
+  <action name="changeNameAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/names.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Change &amp;Name</string>
+   </property>
+  </action>
+  <action name="mutateAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/mutate.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Mutate</string>
+   </property>
+  </action>
+  <action name="newRandomAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >:/acoes/random.png</iconset>
+   </property>
+   <property name="text" >
+    <string>New &amp;Random</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Space</class>
+   <extends>QWidget</extends>
+   <header>space.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Senoide</class>
+   <extends>QWidget</extends>
+   <header>senoide.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../img/resource.qrc" />
+ </resources>
+ <connections>
+  <connection>
+   <sender>quitProgramAct</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>417</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

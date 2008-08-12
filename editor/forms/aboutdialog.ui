@@ -1,0 +1,84 @@
+<ui version="4.0" >
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>521</width>
+    <height>508</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Netlinks - About</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="../../../../../../../src/python/netlinks/src/editorqt/img/resource.qrc" >:/acoes/icone.png</iconset>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QTextBrowser" name="textBrowser" >
+     <property name="html" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:17pt; font-weight:600;">Netlinks&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Netlinks is an engine to simulate two-dimensional spring based creatures. Such creatures can have any spring node arrangement graph to produce any weird and interesting forms.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The creatures, also called springbots, can also have some movement throught the use of "muscles springs", those springs have a sin-like motion thanks to a enviromental sin function. It means all muscles have the same frequency but they can adjust they amplitude and position.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:15pt; font-weight:600;">The Editor&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This program, the editor, alows you to create and edit the springbot creatures. To edit you have to be in "edit mode". In this mode just right-click the great black area to create nodes and connect existing nodes to each other. To move object just left-click and drag, and to delete objects just middle-click.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">When you select a spring you will notice that its position and aplitude represented in the sin curve(right area) gets highlighted, then, you can just drag the muscle descripto to the position and amplitude you desire to produce muscle springs.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">To cancel a muscle spring just grab the amplitude circle to the center of the sin function.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Finally you can click in "edit mode" to get you of it and see your creation move, crawl, walk or whatever it does. To toggle gravity just click "gravity".&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Netlinks was written by Rodrigo Setti, based on a software called sodaplay.&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="pushButton" >
+     <property name="text" >
+      <string>Thanks</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../../../../../../src/python/netlinks/src/editorqt/img/resource.qrc" />
+ </resources>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>474</x>
+     <y>492</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>333</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
