@@ -16,15 +16,24 @@
    </size>
   </property>
   <property name="windowTitle" >
-   <string>NetLinks Sand Box</string>
+   <string>Springbot Editor</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../img/resource.qrc" >:/acoes/icone.png</iconset>
+   <iconset resource="../img/resource.qrc" >
+    <normaloff>:/acoes/icone.png</normaloff>:/acoes/icone.png</iconset>
   </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextUnderIcon</enum>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>81</y>
+     <width>878</width>
+     <height>500</height>
+    </rect>
+   </property>
    <layout class="QVBoxLayout" >
     <item>
      <widget class="QWidget" native="1" name="widget" >
@@ -233,8 +242,25 @@
    <addaction name="menu_World" />
    <addaction name="menu_Options" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>581</y>
+     <width>878</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
   <widget class="QToolBar" name="toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>24</y>
+     <width>878</width>
+     <height>57</height>
+    </rect>
+   </property>
    <property name="windowTitle" >
     <string>toolBar</string>
    </property>
@@ -258,7 +284,8 @@
   </widget>
   <action name="loadSpringbotsAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/load.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/load.png</normaloff>:/acoes/load.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Load Springbots</string>
@@ -266,7 +293,8 @@
   </action>
   <action name="saveSpringbotsAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/save.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/save.png</normaloff>:/acoes/save.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Save Springbots</string>
@@ -274,7 +302,8 @@
   </action>
   <action name="quitProgramAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/quit.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/quit.png</normaloff>:/acoes/quit.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Quit program</string>
@@ -282,7 +311,8 @@
   </action>
   <action name="aboutAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/about.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/about.png</normaloff>:/acoes/about.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Help and About</string>
@@ -293,7 +323,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/gravity.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/gravity.png</normaloff>:/acoes/gravity.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Liquid</string>
@@ -307,7 +338,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/edit.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/edit.png</normaloff>:/acoes/edit.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Edit mode</string>
@@ -315,7 +347,8 @@
   </action>
   <action name="killSpringbotAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/kill.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/kill.png</normaloff>:/acoes/kill.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Kill Springbot</string>
@@ -329,7 +362,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/mass-center.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/mass-center.png</normaloff>:/acoes/mass-center.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Mass Center</string>
@@ -340,7 +374,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/names.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/names.png</normaloff>:/acoes/names.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Names</string>
@@ -348,7 +383,8 @@
   </action>
   <action name="changeNameAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/names.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/names.png</normaloff>:/acoes/names.png</iconset>
    </property>
    <property name="text" >
     <string>Change &amp;Name</string>
@@ -356,7 +392,8 @@
   </action>
   <action name="mutateAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/mutate.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/mutate.png</normaloff>:/acoes/mutate.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Mutate</string>
@@ -364,7 +401,8 @@
   </action>
   <action name="newRandomAct" >
    <property name="icon" >
-    <iconset resource="../img/resource.qrc" >:/acoes/random.png</iconset>
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/random.png</normaloff>:/acoes/random.png</iconset>
    </property>
    <property name="text" >
     <string>New &amp;Random</string>
