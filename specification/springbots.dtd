@@ -15,4 +15,4 @@
 <!ATTLIST spring to IDREF #REQUIRED>
 <!ATTLIST spring offset CDATA "3.1415">
 <!ATTLIST spring amplitude CDATA "0">
-
+<!ATTLIST spring normal CDATA #IMPLIED>

@@ -53,7 +53,7 @@ class Springbot(object):
 
 			# Adiciona springs
 			for spring in parent.springs:
-				# Determina referencia do spring				
+				# Determina referencia do spring
 				for node in self.nodes:
 					if node.id == spring.a.id:
 						A = node
@@ -61,7 +61,7 @@ class Springbot(object):
 					if node.id == spring.b.id:
 						B = node
 				self.add(Spring(A, B, spring.amplitude, spring.offset, spring.normal))
-			
+
 			# copia outros atributos
 			self._node_count_id = parent._node_count_id
 			self._info = dict(parent._info)
@@ -166,7 +166,7 @@ class Springbot(object):
 		elif objeto.__class__ == Spring:
 			self.springs.remove(objeto)
 
-	def massCenter(self):		
+	def massCenter(self):
 		"""
 		Calculates the center of mass
 		"""
@@ -194,7 +194,7 @@ class Springbot(object):
 			min_y = min(min_y, node.pos.y)
 			max_x = max(max_x, node.pos.x)
 			max_y = max(max_y, node.pos.y)
-		
+
 		return min_x-RADIUS, min_y-RADIUS, max_x+RADIUS, max_y+RADIUS
 
 	def unconnected(self):
@@ -258,7 +258,7 @@ class Springbot(object):
 		return self
 
 
-	def draw(self, screen, ticks=None, track_x=False, track_y=False, 
+	def draw(self, screen, ticks=None, track_x=False, track_y=False,
 		backgroundcolor=(20,10,0), showText=True, extrainfo=None):
 		"""
 		Draws Springbot using pygame engine.
@@ -351,10 +351,10 @@ def store_xml(springbots, file=sys.stdout):
 		file = open(file, 'w')
 
 	file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-	file.write('<!DOCTYPE springbots SYSTEM "springbots.dtd">\n')
+	file.write('<!DOCTYPE springbots SYSTEM "http://springbots.sourceforge.net/springbots.dtd">\n')
 	file.write('<springbots>\n')
 
-	for springbot in springbots:
+	for n, springbot in enumerate(springbots):
 		x1, y1, x2, y2 = springbot.boundingBox()
 		cx, cy = (x1+x2)/2, (y1+y1)/2
 
@@ -366,10 +366,10 @@ def store_xml(springbots, file=sys.stdout):
 		file.write('>\n')
 
 		for node in springbot.nodes:
-			file.write('\t\t<node pos="%d,%d" id="%d" />\n' % (node.pos.x-cx, node.pos.y-cy, node.id))
+			file.write('\t\t<node pos="%d,%d" id="S%dN%d" />\n' % (node.pos.x-cx, node.pos.y-cy, n, node.id))
 
 		for spring in springbot.springs:
-			file.write('\t\t<spring from="%d" to="%d" ' % (spring.a.id, spring.b.id))
+			file.write('\t\t<spring from="S%dN%d" to="S%dN%d" ' % (n, spring.a.id, n, spring.b.id))
 			if round(spring.amplitude, 2) != 0:
 				file.write('offset="%.3f" amplitude="%.3f" ' % (spring.offset, spring.amplitude))
 			if fabs(spring.normal - sqrt(sum((spring.a.pos - spring.b.pos)**2))) > 1:
@@ -436,13 +436,13 @@ def load_xml(file=sys.stdin, limit=None):
 			for e in springbotNode.childNodes:
 				if str(e.nodeName) == "node":
 					newnode = Node(pos=tuple((int(x) for x in str(e.attributes["pos"].value).split(","))))
-					newnode.id = int(str(e.attributes["id"].value))
+					newnode.id = int(str(e.attributes["id"].value).split('N')[-1])
 					newspringbot._node_count_id = max(newspringbot._node_count_id, newnode.id)
 					newspringbot.add(newnode)
 
 				elif str(e.nodeName) == "spring":
-					id_a = int(str(e.attributes["from"].value))
-					id_b = int(str(e.attributes["to"].value))
+					id_a = int(str(e.attributes["from"].value).split('N')[-1])
+					id_b = int(str(e.attributes["to"].value).split('N')[-1])
 
 					# Procura A
 					for node in newspringbot.nodes:
@@ -475,4 +475,3 @@ def load_xml(file=sys.stdin, limit=None):
 				break
 
 	return springbots
-
