@@ -13,233 +13,233 @@ from vector import Vector
 from gear import *
 
 try:
-	import pygame
-	HAS_PYGAME = True
+    import pygame
+    HAS_PYGAME = True
 except ImportError:
-	HAS_PYGAME = False
+    HAS_PYGAME = False
 
 #                                                                              #
 ################################################################################
 #                                                                              #
 
 def walk(springbot, width, height, enable_graphics=False, simulation_time=1000):
-	"""
-	Rewards maximum horizontal difference of mass center position before and after simulation
-	"""
+    """
+    Rewards maximum horizontal difference of mass center position before and after simulation
+    """
 
-	# Center springbot horizontaly ant touches ground
-	if len(springbot['bloodline'].split('.')) == 1:
-		springbot.centerGround(height)
-	
-	# Selects its mass center
-	start_x, start_y = springbot.massCenter()
+    # Center springbot horizontaly ant touches ground
+    if len(springbot['bloodline'].split('.')) == 1:
+        springbot.centerGround(height)
 
-	if enable_graphics and HAS_PYGAME:
-		ticks = 0
-		screen = pygame.display.get_surface()
+    # Selects its mass center
+    start_x, start_y = springbot.massCenter()
 
-	# Starts the simulation
-	for i in xrange(simulation_time):
-		if enable_graphics and HAS_PYGAME:		
-			springbot.draw(screen, ticks, track_x=True, extrainfo="evolving for walk")
-			pygame.display.flip()	# Show display
-			ticks += 1
+    if enable_graphics and HAS_PYGAME:
+        ticks = 0
+        screen = pygame.display.get_surface()
 
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or \
-				(event.type == pygame.KEYDOWN and event.key == 27):	
-					raise KeyboardInterrupt
+    # Starts the simulation
+    for i in xrange(simulation_time):
+        if enable_graphics and HAS_PYGAME:
+            springbot.draw(screen, ticks, track_x=True, extrainfo="evolving for walk")
+            pygame.display.flip()   # Show display
+            ticks += 1
 
-		springbot.refresh()
-		springbot.colideWall(height, DOWN)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or \
+                (event.type == pygame.KEYDOWN and event.key == 27):
+                    raise KeyboardInterrupt
 
-	# Selects its mass center now
-	end_x, end_y = springbot.massCenter()
+        springbot.refresh()
+        springbot.colideWall(height, DOWN)
 
-	# Returns the horizontal distance traveled(fitness)
-	return abs(end_x - start_x)
+    # Selects its mass center now
+    end_x, end_y = springbot.massCenter()
+
+    # Returns the horizontal distance traveled(fitness)
+    return abs(end_x - start_x)
 
 #                                                                              #
 ################################################################################
 #                                                                              #
 
 def jump(springbot, width, height, enable_graphics=False, simulation_time=500):
-	"""
-	Rewards maximum mass center height achieved compared with initial height
-	"""
+    """
+    Rewards maximum difference of mass center height achieved
+    """
 
-	# Center springbot horizontaly ant touches ground
-	if len(springbot['bloodline'].split('.')) == 1:
-		springbot.centerGround(height)
-	
-	# Selects its mass center
-	start_x, start_y = springbot.massCenter()
-	min_y = start_y
+    # Center springbot horizontaly ant touches ground
+    if len(springbot['bloodline'].split('.')) == 1:
+        springbot.centerGround(height)
 
-	if enable_graphics and HAS_PYGAME:
-		ticks = 0
-		screen = pygame.display.get_surface()
+    # Selects its mass center
+    start_x, start_y = springbot.massCenter()
+    min_y = max_y = start_y
 
-	# Starts the simulation
-	for i in xrange(simulation_time):
-		if enable_graphics and HAS_PYGAME:		
-			springbot.draw(screen, ticks, extrainfo="evolving for jump")
-			pygame.display.flip()	# Show display
-			ticks += 1
+    if enable_graphics and HAS_PYGAME:
+        ticks = 0
+        screen = pygame.display.get_surface()
 
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or \
-				(event.type == pygame.KEYDOWN and event.key == 27):	
-					raise KeyboardInterrupt
+    # Starts the simulation
+    for i in xrange(simulation_time):
+        if enable_graphics and HAS_PYGAME:
+            springbot.draw(screen, ticks, extrainfo="evolving for jump")
+            pygame.display.flip()   # Show display
+            ticks += 1
 
-		# Calculates its mass center
-		cx, cy = springbot.massCenter()
-		min_y = min(min_y, cy)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or \
+                (event.type == pygame.KEYDOWN and event.key == 27):
+                    raise KeyboardInterrupt
 
-		springbot.refresh()
-		springbot.colideWall(height, DOWN)
+        # Calculates its mass center
+        cx, cy = springbot.massCenter()
+        min_y = min(min_y, cy)
+        max_y = max(max_y, cy)
 
-	# Returns the maximal height achieved
-	return abs(min_y - start_y)
+        springbot.refresh()
+        springbot.colideWall(height, DOWN)
+
+    # Returns the maximal height achieved
+    return abs(max_y - min_y)
 
 #                                                                              #
 ################################################################################
 #                                                                              #
 
 def equilibrium(springbot, width, height, enable_graphics=False, simulation_time=600):
-	"""
-	Rewards maximum average mass center height percentage over body's height
-	"""
+    """
+    Rewards maximum average mass center height percentage over body's height
+    """
 
-	# Center springbot horizontaly ant touches ground
-	if len(springbot['bloodline'].split('.')) == 1:
-		springbot.centerGround(height)
-	
-	# Equilibrium ratio sum
-	eq_ratio = 0
+    # Center springbot horizontaly ant touches ground
+    if len(springbot['bloodline'].split('.')) == 1:
+        springbot.centerGround(height)
 
-	# Height sum
-	height_av = 0
+    # Equilibrium ratio sum
+    eq_ratio = 0
 
-	if enable_graphics and HAS_PYGAME:
-		ticks = 0
-		screen = pygame.display.get_surface()
+    # Height sum
+    height_av = 0
 
-	# Starts the simulation
-	for i in xrange(simulation_time):
-		if enable_graphics and HAS_PYGAME:		
-			springbot.draw(screen, ticks, extrainfo="evolving for equilibrium")
-			pygame.display.flip()	# Show display
-			ticks += 1
+    if enable_graphics and HAS_PYGAME:
+        ticks = 0
+        screen = pygame.display.get_surface()
 
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or \
-				(event.type == pygame.KEYDOWN and event.key == 27):	
-					raise KeyboardInterrupt
+    # Starts the simulation
+    for i in xrange(simulation_time):
+        if enable_graphics and HAS_PYGAME:
+            springbot.draw(screen, ticks, extrainfo="evolving for equilibrium")
+            pygame.display.flip()   # Show display
+            ticks += 1
 
-		# Calculates its mass center
-		cx, cy = springbot.massCenter()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or \
+                (event.type == pygame.KEYDOWN and event.key == 27):
+                    raise KeyboardInterrupt
 
-		# Calculates its bounding box
-		x1, y1, x2, y2 = springbot.boundingBox()
+        # Calculates its mass center
+        cx, cy = springbot.massCenter()
 
-		# Calculates the equilibrium ratio and sum
-		eq_ratio += (y2-cy)/(y2-y1)
-		height_av += y2-y1
+        # Calculates its bounding box
+        x1, y1, x2, y2 = springbot.boundingBox()
 
-		springbot.refresh()
-		springbot.colideWall(height, DOWN)
+        # Calculates the equilibrium ratio and sum
+        eq_ratio += (y2-cy)/(y2-y1)
+        height_av += y2-y1
 
-	# Returns the equilibrium ratio average
-	return 0 if height_av/simulation_time < RADIUS else eq_ratio/simulation_time
+        springbot.refresh()
+        springbot.colideWall(height, DOWN)
+
+    # Returns the equilibrium ratio average
+    return 0 if height_av/simulation_time < RADIUS else eq_ratio/simulation_time
 
 #                                                                              #
 ################################################################################
 #                                                                              #
 
 def height(springbot, width, height, enable_graphics=False, simulation_time=400):
-	"""
-	Rewards maximum average aspect ratio of body's height over width
-	"""
+    """
+    Rewards maximum average aspect ratio of body's height over width
+    """
 
-	# Center springbot horizontaly ant touches ground
-	if len(springbot['bloodline'].split('.')) == 1:
-		springbot.centerGround(height)
-	
-	# Aspect ratio sum
-	aspect_ratio = 0
+    # Center springbot horizontaly ant touches ground
+    if len(springbot['bloodline'].split('.')) == 1:
+        springbot.centerGround(height)
 
-	if enable_graphics and HAS_PYGAME:
-		ticks = 0
-		screen = pygame.display.get_surface()
+    # Aspect ratio sum
+    aspect_ratio = 0
 
-	# Starts the simulation
-	for i in xrange(simulation_time):
-		if enable_graphics and HAS_PYGAME:		
-			springbot.draw(screen, ticks, extrainfo="evolving for height")
-			pygame.display.flip()	# Show display
-			ticks += 1
+    if enable_graphics and HAS_PYGAME:
+        ticks = 0
+        screen = pygame.display.get_surface()
 
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or \
-				(event.type == pygame.KEYDOWN and event.key == 27):	
-					raise KeyboardInterrupt
+    # Starts the simulation
+    for i in xrange(simulation_time):
+        if enable_graphics and HAS_PYGAME:
+            springbot.draw(screen, ticks, extrainfo="evolving for height")
+            pygame.display.flip()   # Show display
+            ticks += 1
 
-		# Calculates its bounding box
-		x1, y1, x2, y2 = springbot.boundingBox()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or \
+                (event.type == pygame.KEYDOWN and event.key == 27):
+                    raise KeyboardInterrupt
 
-		# Calculates the aspect ratio and sum
-		if x2 - x1 != 0:
-			aspect_ratio += (y2 - y1) / (x2 - x1)
+        # Calculates its bounding box
+        x1, y1, x2, y2 = springbot.boundingBox()
 
-		# Refresgh springbot
-		springbot.refresh()
-		springbot.colideWall(height, DOWN)
+        # Calculates the aspect ratio and sum
+        if x2 - x1 != 0:
+            aspect_ratio += (y2 - y1) / (x2 - x1)
 
-	# Returns the aspect ratio average
-	return aspect_ratio/simulation_time
+        # Refresgh springbot
+        springbot.refresh()
+        springbot.colideWall(height, DOWN)
+
+    # Returns the aspect ratio average
+    return aspect_ratio/simulation_time
 
 #                                                                              #
 ################################################################################
 #                                                                              #
 
 def swim(springbot, width, height, enable_graphics=False, simulation_time=1500):
-	"""
-	Rewards maximum diference between mass centers positions before and after the
-	simulation in a liquid enviroment without gravity.
-	"""
-	
-	# Selects its mass center
-	start_x, start_y = springbot.massCenter()
+    """
+    Rewards maximum diference between mass centers positions before and after the
+    simulation in a liquid enviroment without gravity.
+    """
 
-	if enable_graphics and HAS_PYGAME:
-		ticks = 0
-		screen = pygame.display.get_surface()
+    # Selects its mass center
+    start_x, start_y = springbot.massCenter()
 
-	# Starts the simulation
-	angle = 0.0
-	for i in xrange(simulation_time):
-		if enable_graphics and HAS_PYGAME:		
-			springbot.draw(screen, ticks, track_x=True, track_y=True, 
-			backgroundcolor=(0,10,20), extrainfo="evolving for swim")
-			pygame.display.flip()	# Show display
-			ticks += 1
+    if enable_graphics and HAS_PYGAME:
+        ticks = 0
+        screen = pygame.display.get_surface()
 
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or \
-				(event.type == pygame.KEYDOWN and event.key == 27):	
-					raise KeyboardInterrupt
+    # Starts the simulation
+    angle = 0.0
+    for i in xrange(simulation_time):
+        if enable_graphics and HAS_PYGAME:
+            springbot.draw(screen, ticks, track_x=True, track_y=True,
+            backgroundcolor=(0,10,20), extrainfo="evolving for swim")
+            pygame.display.flip()   # Show display
+            ticks += 1
 
-		springbot.refresh(grav=(0,0), visc=VISCOSITY)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or \
+                (event.type == pygame.KEYDOWN and event.key == 27):
+                    raise KeyboardInterrupt
 
-	# Selects its mass center now
-	end_x, end_y = springbot.massCenter()
+        springbot.refresh(grav=(0,0), visc=VISCOSITY)
 
-	# Returns the horizontal distance traveled(fitness)
-	return sqrt((end_x-start_x)**2 + (end_y-start_y)**2)
-	
+    # Selects its mass center now
+    end_x, end_y = springbot.massCenter()
+
+    # Returns the horizontal distance traveled(fitness)
+    return sqrt((end_x-start_x)**2 + (end_y-start_y)**2)
+
 
 #                                                                              #
 ################################################################################
 #                                                                              #
-

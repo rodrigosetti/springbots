@@ -1,0 +1,32 @@
+*** Springbots ***
+
+Written by Rodrigo Setti - rodrigosetti@gmail.com
+
+Springbot is a genetic algorithm experiment in which physical simulated 2d
+creatures built with nodes and springs(like sodaplay) are evolved for
+walk, swim, jump or whatever fitness function the user might write.
+After several simulations it is possible for one to see animal-like behaviors
+optimizing for the desired fitness.
+
+*** Requirements ***
+
+* Python >= 2.5
+* python-qt4
+* xmlrpclib-python
+* pygame
+
+*** Programs ***
+
+* evolve.py -	Take an population described in a xml file and evolve them for
+				a specific fitness function chosen.
+
+* net-evolve.py	-	Same like evolve.py but connect to a set of servers listed in
+					fitness-servers.txt to do the processing.
+
+* imagebot.py -	Transform a xml springbot description into a svg image.
+
+* randombot.py -	Generate a random springbot population xml file, useful for a
+					starting seed for simulations.
+
+* viewer.py -	Real time graphics of the springbot being simulated(the evolve
+				programs also have an option for that).

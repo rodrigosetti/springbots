@@ -12,76 +12,76 @@ WIDTH, HEIGHT = 640, 480
 #
 if __name__ == "__main__":
 
-	# Parses command line
-	parser = optparse.OptionParser()
-	parser.add_option("-i", "--index", dest="index", default=0,
-		help="Springbot index in population file", metavar="INDEX")
-	parser.add_option("-l", "--liquid", dest="liquid", default=False,
-		action="store_true",
-		help="Simulates a liquid enviroment")
-	parser.add_option("-f", "--fullscreen", dest="fullscreen", default=False,
-		action="store_true", help="Show in fullscreen")
+    # Parses command line
+    parser = optparse.OptionParser()
+    parser.add_option("-i", "--index", dest="index", default=0,
+            help="Springbot index in population file", metavar="INDEX")
+    parser.add_option("-l", "--liquid", dest="liquid", default=False,
+            action="store_true",
+            help="Simulates a liquid enviroment")
+    parser.add_option("-f", "--fullscreen", dest="fullscreen", default=False,
+            action="store_true", help="Show in fullscreen")
 
-	(options, args) = parser.parse_args()
+    (options, args) = parser.parse_args()
 
-	if len(args) == 0:
-		readfile = sys.stdin
-	else:
-		readfile = args[0]
+    if len(args) == 0:
+        readfile = sys.stdin
+    else:
+        readfile = args[0]
 
-	options.index = int(options.index)
+    options.index = int(options.index)
 
-	# Load springbot
-	springbot = load_xml(readfile, limit=options.index+1)[options.index]
+    # Load springbot
+    springbot = load_xml(readfile, limit=options.index+1)[options.index]
 
-	pygame.init()
-	pygame.display.set_mode((WIDTH,HEIGHT),
-		pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE if options.fullscreen else pygame.DOUBLEBUF)
-	pygame.display.set_caption('Springbots viewer')
-	pygame.mouse.set_visible(not options.fullscreen)
+    pygame.init()
+    pygame.display.set_mode((WIDTH,HEIGHT),
+            pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE if options.fullscreen else pygame.DOUBLEBUF)
+    pygame.display.set_caption('Springbots viewer')
+    pygame.mouse.set_visible(not options.fullscreen)
 
-	# Center springbot horizontaly ant touches ground
-	if not options.liquid:
-		springbot.centerGround(HEIGHT)
-	else:
-		for node in springbot.nodes:
-			node.pos.y += (HEIGHT/2)
+    # Center springbot horizontaly ant touches ground
+    if not options.liquid:
+        springbot.centerGround(HEIGHT)
+    else:
+        for node in springbot.nodes:
+            node.pos.y += (HEIGHT/2)
 
-	screen = pygame.display.get_surface()
+    screen = pygame.display.get_surface()
 
-	# Ticks count
-#	ticks = 0
+    # Ticks count
+#       ticks = 0
 
-	# controle de fps
-	clock = pygame.time.Clock()
+    # controle de fps
+    clock = pygame.time.Clock()
 
-	try:
-		running = True
+    try:
+        running = True
 
-		while running:
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT or \
-				(event.type == pygame.KEYDOWN and event.key == 27):
-					running = False
-					break
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or \
+                (event.type == pygame.KEYDOWN and event.key == 27):
+                    running = False
+                    break
 
-			if options.liquid:
-				springbot.draw(screen, track_x=True, track_y=True, backgroundcolor=(0,50,100))
-				springbot.refresh(grav=(0,0), visc=VISCOSITY)
-			else:
-				springbot.draw(screen, track_x=True)
-				springbot.refresh()
-				springbot.colideWall(HEIGHT, DOWN)
+            if options.liquid:
+                springbot.draw(screen, track_x=True, track_y=True, backgroundcolor=(0,50,100))
+                springbot.refresh(grav=(0,0), visc=VISCOSITY)
+            else:
+                springbot.draw(screen, track_x=True)
+                springbot.refresh()
+                springbot.colideWall(HEIGHT, DOWN)
 
-			pygame.display.flip()	# Show display
+            pygame.display.flip()   # Show display
 
-#			ticks += 1
+#                       ticks += 1
 
-			clock.tick(1000)	# limita fps
+            clock.tick(1000)        # limita fps
 
 
-	except KeyboardInterrupt:
-		pass
+    except KeyboardInterrupt:
+        pass
 
-	# Closes pygame
-	pygame.quit()
+    # Closes pygame
+    pygame.quit()
