@@ -168,7 +168,7 @@ if __name__ == "__main__":
     if HAS_PYGAME:
         parser.add_option("-g", "--graphics", dest="graphics", default=False,
                 help="Enable graphics", action="store_true")
-        parser.add_option("-k", "--fullscreen", dest="fullscreen", default=False,
+        parser.add_option("-F", "--fullscreen", dest="fullscreen", default=False,
                 action="store_true", help="Show in fullscreen")
 
     parser.add_option("-v", "--verbose", dest="verbose", default=False,

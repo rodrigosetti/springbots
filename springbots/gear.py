@@ -54,14 +54,13 @@ class Node(object):
     position and a velocity and can be connected by springs
     """
 
-    def __init__(self, pos=(0,0), vel=(0,0), acc=(0,0), id=0):
+    def __init__(self, pos=(0,0), vel=(0,0), acc=(0,0)):
         """
         Creates a node with a start position, velocity and acceleration
         """
         self.pos = Vector(pos[0], pos[1])
         self.vel = Vector(vel[0], vel[1])
         self.acc = Vector(acc[0], acc[1])
-        self.id = id
 
     def refresh(self, atr=AIR_RESISTANCE, grav=GRAVITY, elast=ELASTICITY):
         """
@@ -81,25 +80,33 @@ class Node(object):
         Colides this node with a wall, if possible. Applies surface friction and changes velocity
         """
         global UP, DOWN, LEFT, RIGHT
+        colision_strenght = 0
 
         if side == LEFT and self.pos.x < limit + radius:
             self.pos.x = limit + radius
             self.vel.x = self.vel.x * - atr_normal if abs(self.vel.x * - atr_normal) > min_vel else 0.0
             self.vel.y *= atr_surface
+            colision_strenght = abs(self.vel.x)
         elif side == RIGHT and self.pos.x > limit - radius:
             self.pos.x = limit - radius
             self.vel.x = self.vel.x * - atr_normal if abs(self.vel.x * - atr_normal) > min_vel else 0.0
             self.vel.y *= atr_surface
+            colision_strenght = abs(self.vel.x)
+
         if side == UP and self.pos.y < limit + radius:
             self.pos.y = limit + radius
             self.vel.x *= atr_surface
             self.vel.y = self.vel.y * - atr_normal if abs(self.vel.y * - atr_normal) > min_vel else 0.0
+            colision_strenght = abs(self.vel.y)
         elif side == DOWN and self.pos.y > limit - radius:
             self.pos.y = limit - radius
             self.vel.x *= atr_surface
             self.vel.y = self.vel.y * - atr_normal if abs(self.vel.y * - atr_normal) > min_vel else 0.0
+            colision_strenght = abs(self.vel.y)
         elif side not in [UP, LEFT, RIGHT, DOWN]:
             raise ValueError("side must be UP, LEFT, RIGHT or DOWN.")
+
+        return colision_strenght
 
     def colide(self, other, radius=RADIUS):
         """

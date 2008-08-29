@@ -3,10 +3,10 @@
 from springbots.gear import *
 from springbots.springbot import load_xml
 from springbots.evolvespringbot import random_springbot
-import sys, pygame, optparse
+import sys, pygame, optparse, os
 import random
 
-WIDTH, HEIGHT = 640,480
+WIDTH, HEIGHT = 640,400
 
 #
 # If this module its being running as main, execute main thread
@@ -17,6 +17,8 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-f", "--fullscreen", dest="fullscreen", default=False,
             action="store_true", help="Show in fullscreen")
+    parser.add_option("-s", "--sound", dest="sound", default=False,
+            action="store_true", help="Play sound")
     parser.add_option("-t", "--time", dest="time", default=5000, metavar="TIME",
             help="Time(in cicles) simulating each springbot")
     parser.add_option("-r", "--random", dest="randoms", default=0, metavar="RANDOMS",
@@ -36,6 +38,10 @@ if __name__ == "__main__":
     population = load_xml(readfile) + [random_springbot() for x in xrange(options.randoms)]
 
     pygame.init()
+
+    if options.sound:
+        colide_snd = pygame.mixer.Sound(os.path.join('sound','pop.wav'))
+
     pygame.display.set_mode((WIDTH,HEIGHT),
             pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE if options.fullscreen else pygame.DOUBLEBUF)
     pygame.display.set_caption('Springbots viewer')
@@ -53,7 +59,7 @@ if __name__ == "__main__":
                     adapted = springbot["adapted"]
                 except KeyError:
                     adapted = "unknown"
-                
+
                 if adapted == "random":
                     springbot = random_springbot()
                     extrainfo = "random generated"
@@ -91,12 +97,16 @@ if __name__ == "__main__":
                     else:
                         springbot.draw(screen, ticks=ticks, track_x=True, extrainfo=extrainfo)
                         springbot.refresh()
-                        springbot.colideWall(HEIGHT, DOWN)
+                        col = springbot.colideWall(HEIGHT, DOWN)
+                        if options.sound and col > 0.1:
+                            colide_snd.set_volume((col-0.2)**2)
+                            colide_snd.play(0, int(col))
 
                     pygame.display.flip()   # Show display
 
                     ticks += 1
                     clock.tick(1000)        # limita fps
+
 
                 if not running:
                     break

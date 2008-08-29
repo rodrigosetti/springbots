@@ -117,8 +117,11 @@ class Springbot(object):
         """
         Colides this springbot with a straigt wall
         """
+        colision_strenght = 0
         for node in self.nodes:
-            node.colideWall(limit, side, atr_normal, atr_surface, min_vel, radius)
+            colision_strenght += node.colideWall(limit, side, atr_normal, atr_surface, min_vel, radius)
+
+        return colision_strenght/len(self.nodes)
 
     def __len__(self):
         """
@@ -298,14 +301,14 @@ class Springbot(object):
         siz_x, siz_y = width/10, height/10
         for x in xrange(0,width+100,siz_x):
             for y in xrange(0,height+100,siz_y):
-                pygame.draw.rect(screen, backgroundcolor, 
+                pygame.draw.rect(screen, backgroundcolor,
                                  (((x - cxp) % (width+siz_x) - siz_x, (y - cyp) % (height+siz_y) - siz_y),
                                   (siz_x-10,siz_y-10)))
 
         # Desenha springs
         for spring in self.springs:
             length = (spring.a.pos - spring.b.pos).length()
-            fator = (length - spring.normal)/length
+            fator = (length - spring.normal)/length if length > 0 else 0
 
             if fator <= 0:
                 color = (255, 255-min(-fator * 255, 255), 255-min(-fator * 255, 255))
@@ -322,7 +325,7 @@ class Springbot(object):
             vely += node.vel.y
 
             pygame.draw.circle(screen, (0,0,0), (int(node.pos.x*zm - cx), int(node.pos.y*zm - cy)), int(RADIUS*zm), 0)
-            pygame.draw.circle(screen, (10,255,255), (int(node.pos.x*zm - cx), int(node.pos.y*zm - cy)), 
+            pygame.draw.circle(screen, (10,255,255), (int(node.pos.x*zm - cx), int(node.pos.y*zm - cy)),
                                int(RADIUS*zm), int(2*zm))
 
         velx /= len(self.nodes)
