@@ -104,7 +104,7 @@ class FitnessThread(Thread):
 #                                                                              #
 
 def network_evolve(save_freq=100, limit=0,
-        verbose=False, discard_fraction=0.33, random_insert=0.1,
+        verbose=False, discard_fraction=0.4, random_insert=0.1,
         best=False):
     """
     Given the initial population 'population', executes
@@ -113,18 +113,24 @@ def network_evolve(save_freq=100, limit=0,
     """
     global population, servers, fitness_function
 
-    gen = 1 # Initial generation
+    # Test if parameters are correct
+    if discard_fraction < 0 or random_insert < 0:
+        raise ValueError("discard_fraction and random_insert must both range from 0 to 1")
+    elif discard_fraction + random_insert > 1:
+        raise ValueError("the sum of discard_fraction and random_insert must not be greater than 1")
+
+    iter = 1 # Initial iteration
 
     # Calculate amount of discarded and random population
-    discarded = int(len(population) * discard_fraction)
-    randoms = int(len(population) * random_insert)
+    discarded = int(len(population)/2 * discard_fraction)
+    randoms = int(len(population)/2 * random_insert)
 
     if verbose:
         print "Initiating simulation with a population of %d specimens..." % (len(population))
         print "Evolving for %s:" % (fitness_function)
-        print "At each generation %d will be discarded, %d of the remaining will" %\
+        print "At each iteration %d will be discarded, %d of the remaining will" %\
         (discarded, discarded-randoms),
-        print "be selected cloned and mutated and %d of random springbots will be inserted" %\
+        print "be selected cloned and mutated and %d random springbots will be inserted" %\
         (randoms)
 
     # Turn all population into NetworkEvolveSpringbot
@@ -132,10 +138,10 @@ def network_evolve(save_freq=100, limit=0,
 
     try:
 
-        while population and servers and gen != limit:
+        while population and servers and iter != limit:
 
             if verbose:
-                print "Generation %d:" % (gen)
+                print "Iteration %d:" % (iter)
                 fitness_sum = 0
                 bloodline_len_sum = 0
 
@@ -165,8 +171,9 @@ def network_evolve(save_freq=100, limit=0,
             # Now Order population by its fitness
             population.sort(reverse=True)
 
-            # Discards and insert randoms
-            population = population[:-(discarded + randoms)]
+            # Discards some of the worse half
+            for specimen in sample(population[len(population)/2:], discarded + randoms):
+                population.remove(specimen)
 
             # Clones and mutates some of the remaining half
             for specimen in sample(population, discarded):
@@ -189,13 +196,13 @@ def network_evolve(save_freq=100, limit=0,
             population += [NetworkEvolveSpringbot(random=True) for x in xrange(randoms)]
 
             # Test if it is time to save population
-            if gen % save_freq == 0:
+            if iter % save_freq == 0:
                 # Saves the current population
-                filename = "%s-p%d-g%d.xml" % (fitness_function, len(population), gen)
+                filename = "%s-p%d-i%d.xml" % (fitness_function, len(population), iter)
                 store_xml(population, filename)
 
                 if verbose:
-                    print "generation %d saved into %s" % (gen, filename)
+                    print "iteration %d saved into %s" % (iter, filename)
 
             # Saves best if asked
             if best:
@@ -203,10 +210,10 @@ def network_evolve(save_freq=100, limit=0,
                 store_xml(population[:1], filename)
 
                 if verbose:
-                    print "Best of generation %d saved into %s" % (gen, filename)
+                    print "Best of iteration %d saved into %s" % (iter, filename)
 
-            # Increments generation
-            gen += 1
+            # Increments iteration
+            iter += 1
 
     except KeyboardInterrupt:
         pass
@@ -221,11 +228,11 @@ def network_evolve(save_freq=100, limit=0,
     population.sort(reverse=True)
 
     # Now, saves the current population and quit
-    filename = "%s-p%d-g%d.xml" % (fitness_function, len(population), gen)
+    filename = "%s-p%d-i%d.xml" % (fitness_function, len(population), iter)
     store_xml(population, filename)
     if verbose:
         print
-        print "generation %d saved into %s" % (gen, filename)
+        print "iteration %d saved into %s" % (iter, filename)
         print "terminating..."
 
 #
@@ -241,11 +248,11 @@ if __name__ == "__main__":
     parser.add_option("-v", "--verbose", dest="verbose", default=False,
             help="Verbose output", action="store_true")
     parser.add_option("-b", "--best", dest="best", default=False,
-            help="Save best each generation", action="store_true")
+            help="Save best each iteration", action="store_true")
     parser.add_option("-s", "--save-freq", dest="save_freq", default=100,
-            help="Frequency the simulation saves the current population, default is each 100 generations", metavar="NUMBER")
+            help="Frequency the simulation saves the current population, default is each 100 iterations", metavar="NUMBER")
     parser.add_option("-l", "--limit", dest="limit", default=0,
-            help="Evolves to a limit number of generations, default is endless", metavar="GENERATIONS")
+            help="Evolves to a limit number of iterations, default is endless", metavar="ITERATIONS")
     parser.add_option("-f", "--fitness", dest="fitness", default="walk",
             help="Fitness function used to evolve, default is walk", metavar="FITNESS")
     parser.add_option("-n", "--serverslist", dest="serverslist", default='fitness-servers.txt',

@@ -36,6 +36,9 @@ NODE_WEIGHT = 1.26
 #: Node's radius
 RADIUS = 8
 
+#: Maximum spring's normal
+MAX_NORMAL = 400.0
+
 #: Direction constant: UP
 UP              = 1
 
@@ -157,7 +160,7 @@ class Spring(object):
         """
         self.a = a
         self.b = b
-        self.normal = sqrt(sum((a.pos-b.pos)**2)) if normal is None else normal
+        self.normal = min(sqrt(sum((a.pos-b.pos)**2)) if normal is None else normal, MAX_NORMAL)
         self.amplitude = amplitude
         self.offset = offset
 

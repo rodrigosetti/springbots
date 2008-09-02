@@ -21,8 +21,8 @@ if __name__ == "__main__":
             action="store_true", help="Play sound")
     parser.add_option("-t", "--time", dest="time", default=5000, metavar="TIME",
             help="Time(in cicles) simulating each springbot")
-    parser.add_option("-r", "--random", dest="randoms", default=0, metavar="RANDOMS",
-            help="Adds a number of random springbots to demo")
+    parser.add_option("-S", "--shuffle", dest="shuffle", default=False,
+            action="store_true", help="Adds a number of random springbots to demo")
 
     (options, args) = parser.parse_args()
 
@@ -32,10 +32,9 @@ if __name__ == "__main__":
         readfile = args[0]
 
     options.time = int(options.time)
-    options.randoms = int(options.randoms)
 
     # Load population from file
-    population = load_xml(readfile) + [random_springbot() for x in xrange(options.randoms)]
+    population = load_xml(readfile)
 
     pygame.init()
 
@@ -52,7 +51,9 @@ if __name__ == "__main__":
         running = True
         while running:
 
-            random.shuffle(population)
+            if options.shuffle:
+                random.shuffle(population)
+
             for springbot in population:
 
                 try:
@@ -61,7 +62,6 @@ if __name__ == "__main__":
                     adapted = "unknown"
 
                 if adapted == "random":
-                    springbot = random_springbot()
                     extrainfo = "random generated"
                     liquid = random.choice([True,False])
                 else:

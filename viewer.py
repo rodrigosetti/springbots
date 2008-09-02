@@ -3,7 +3,7 @@
 from math import *
 from springbots.gear import *
 from springbots.springbot import load_xml
-import sys, pygame, optparse
+import sys, pygame, optparse, os
 
 WIDTH, HEIGHT = 640, 480
 
@@ -21,6 +21,8 @@ if __name__ == "__main__":
             help="Simulates a liquid enviroment")
     parser.add_option("-f", "--fullscreen", dest="fullscreen", default=False,
             action="store_true", help="Show in fullscreen")
+    parser.add_option("-s", "--sound", dest="sound", default=False,
+            action="store_true", help="Play sound")
 
     (options, args) = parser.parse_args()
 
@@ -40,7 +42,10 @@ if __name__ == "__main__":
     pygame.display.set_caption('Springbots viewer')
     pygame.mouse.set_visible(not options.fullscreen)
 
-    # Center springbot horizontaly ant touches ground
+    if options.sound:
+        colide_snd = pygame.mixer.Sound(os.path.join('sound','pop.wav'))
+
+    # Center springbot horizontaly and touches ground
     if not options.liquid:
         springbot.centerGround(HEIGHT)
     else:
@@ -50,7 +55,7 @@ if __name__ == "__main__":
     screen = pygame.display.get_surface()
 
     # Ticks count
-#       ticks = 0
+    ticks = 0
 
     # controle de fps
     clock = pygame.time.Clock()
@@ -71,12 +76,14 @@ if __name__ == "__main__":
             else:
                 springbot.draw(screen, track_x=True)
                 springbot.refresh()
-                springbot.colideWall(HEIGHT, DOWN)
+                col = springbot.colideWall(HEIGHT, DOWN)
+                if options.sound and col > 0.1:
+                    colide_snd.set_volume((col-0.2)**2)
+                    colide_snd.play(0, int(col))
 
             pygame.display.flip()   # Show display
 
-#                       ticks += 1
-
+            ticks += 1
             clock.tick(1000)        # limita fps
 
 

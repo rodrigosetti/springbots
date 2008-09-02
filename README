@@ -47,3 +47,15 @@ optimizing for the desired fitness.
 
 # Evolve a starting random population of 100 genomes with graphics and statistic output:
 $ ./randombot.py -p 100 | ./evolve.py -f swim -vg
+
+# Or in windows:
+C:\Python25\python.exe randombot.py -p 100 | ./evolve.py -f swim -vg
+
+# To start editor move to editor directory and run editor.py:
+# ./editor.py
+
+# in windows:
+C:\Python25\python.exe editor.py
+
+# Depending on your system configuration you can run the editor direct from
+# file manager.

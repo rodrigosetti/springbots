@@ -42,7 +42,7 @@ class EvolveSpringbot(Springbot):
 
         if not parent:
             self['fitness'] = 0
-            self['bloodline'] = hex(_bloodline_count)[2:] + '_'
+            self['bloodline'] = hex(_bloodline_count)[2:] + BLOODLINE_SEP
 
         self._bloodline_count = 0
         _bloodline_count += 1
