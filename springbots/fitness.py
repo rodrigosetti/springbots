@@ -26,8 +26,9 @@ def walk(springbot, width, height, enable_graphics=False, simulation_time=1000):
     """
     Rewards maximum horizontal difference of mass center position before and after simulation
     """
+    springbot['adapted'] = 'walk'
 
-    # Center springbot horizontaly ant touches ground
+    # Center springbot horizontaly and touches ground
     if len(springbot['bloodline'].split('.')) == 1:
         springbot.centerGround(height)
 
@@ -67,6 +68,7 @@ def jump(springbot, width, height, enable_graphics=False, simulation_time=500):
     """
     Rewards maximum difference of mass center height achieved
     """
+    springbot['adapted'] = 'jump'
 
     # Center springbot horizontaly ant touches ground
     if len(springbot['bloodline'].split('.')) == 1:
@@ -111,6 +113,7 @@ def equilibrium(springbot, width, height, enable_graphics=False, simulation_time
     """
     Rewards maximum average mass center height percentage over body's height
     """
+    springbot['adapted'] = 'equilibrium'
 
     # Center springbot horizontaly ant touches ground
     if len(springbot['bloodline'].split('.')) == 1:
@@ -162,6 +165,7 @@ def height(springbot, width, height, enable_graphics=False, simulation_time=400)
     """
     Rewards maximum average aspect ratio of body's height over width
     """
+    springbot['adapted'] = 'height'
 
     # Center springbot horizontaly ant touches ground
     if len(springbot['bloodline'].split('.')) == 1:
@@ -209,6 +213,7 @@ def swim(springbot, width, height, enable_graphics=False, simulation_time=1500):
     Rewards maximum diference between mass centers positions before and after the
     simulation in a liquid enviroment without gravity.
     """
+    springbot['adapted'] = 'swim'
 
     # Selects its mass center
     start_x, start_y = springbot.massCenter()

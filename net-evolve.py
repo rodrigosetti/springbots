@@ -126,11 +126,11 @@ def network_evolve(save_freq=100, limit=0,
     randoms = int(len(population)/2 * random_insert)
 
     if verbose:
-        print "Initiating simulation with a population of %d specimens..." % (len(population))
-        print "Evolving for %s:" % (fitness_function)
-        print "At each iteration %d will be discarded, %d of the remaining will" %\
+        print "# Initiating simulation with a population of %d specimens..." % (len(population))
+        print "# Evolving for %s:" % (fitness_function)
+        print "# At each iteration %d will be discarded, %d of the remaining will" %\
         (discarded, discarded-randoms),
-        print "be selected cloned and mutated and %d random springbots will be inserted" %\
+        print "# be selected cloned and mutated and %d random springbots will be inserted" %\
         (randoms)
 
     # Turn all population into NetworkEvolveSpringbot
@@ -202,7 +202,7 @@ def network_evolve(save_freq=100, limit=0,
                 store_xml(population, filename)
 
                 if verbose:
-                    print "iteration %d saved into %s" % (iter, filename)
+                    print "# iteration %d saved into %s" % (iter, filename)
 
             # Saves best if asked
             if best:
@@ -210,7 +210,7 @@ def network_evolve(save_freq=100, limit=0,
                 store_xml(population[:1], filename)
 
                 if verbose:
-                    print "Best of iteration %d saved into %s" % (iter, filename)
+                    print "# Best of iteration %d saved into %s" % (iter, filename)
 
             # Increments iteration
             iter += 1
@@ -218,7 +218,7 @@ def network_evolve(save_freq=100, limit=0,
     except KeyboardInterrupt:
         pass
     if verbose:
-        print "waiting for threads..."
+        print "# waiting for threads..."
 
     # Join(waits) all threads
     for thread in threads:
@@ -232,8 +232,8 @@ def network_evolve(save_freq=100, limit=0,
     store_xml(population, filename)
     if verbose:
         print
-        print "iteration %d saved into %s" % (iter, filename)
-        print "terminating..."
+        print "# iteration %d saved into %s" % (iter, filename)
+        print "# terminating..."
 
 #
 # If this module its being running as main, execute main thread
@@ -261,7 +261,8 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     # Reads fitness servers
-    servers = [xmlrpclib.ServerProxy(strip(l)) for l in open(options.serverslist, 'r') if len(strip(l)) > 0 and strip(l)[0] != '#']
+    servers = [xmlrpclib.ServerProxy(strip(l)) for l in open(options.serverslist, 'r') 
+               if len(strip(l)) > 0 and strip(l)[0] != '#']
     servers_lock = [0 for x in xrange(len(servers))]
 
     fitness_function = options.fitness
@@ -271,10 +272,6 @@ if __name__ == "__main__":
 
     # Reads the initial population
     population = load_xml(options.arquivo if options.arquivo else sys.stdin)
-
-# Set "adapted" value to current fitness
-    for springbot in population:
-        springbot['adapted'] = options.fitness
 
     # Starts the simulation
     network_evolve(

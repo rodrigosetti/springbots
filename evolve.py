@@ -62,12 +62,11 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
     randoms = int(len(population)/2 * random_insert)
 
     if verbose:
-        print "Initiating simulation with a population of %d specimens..." % (len(population))
-        print "Evolving for %s:" % (fitness.__name__)
-        print fitness.__doc__
-        print "At each iteration %d will be discarded, %d of the remaining will" %\
+        print "# Initiating simulation with a population of %d specimens." % (len(population))
+        print "# Evolving for %s:" % (fitness.__name__)
+        print "# At each iteration %d will be discarded, %d of the remaining will" %\
         (discarded, discarded-randoms),
-        print "be selected cloned and mutated and %d random springbots will be inserted" %\
+        print "# be selected cloned and mutated and %d random springbots will be inserted" %\
         (randoms)
 
     # Transforms population into evolvespringbots
@@ -134,7 +133,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 store_xml(population, filename)
 
                 if verbose:
-                    print "iteration %d saved into %s" % (iter, filename)
+                    print "# iteration %d saved into %s" % (iter, filename)
 
             # Saves best if asked
             if best:
@@ -142,7 +141,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 store_xml(population[:1], filename)
 
                 if verbose:
-                    print "Best of iteration %d saved into %s" % (iter, filename)
+                    print "# Best of iteration %d saved into %s" % (iter, filename)
 
             # Increments iteration
             iter += 1
@@ -158,8 +157,8 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
     store_xml(population, filename)
     if verbose:
         print
-        print "iteration %d saved into %s" % (iter, filename)
-        print "terminating..."
+        print "# iteration %d saved into %s" % (iter, filename)
+        print "# terminating..."
 
 #
 # If this module its being running as main, execute main thread
@@ -201,10 +200,6 @@ if __name__ == "__main__":
 
     # Reads the initial population
     init_population = load_xml(options.arquivo if options.arquivo else sys.stdin)
-
-# Set "adapted" value to current fitness
-    for springbot in init_population:
-        springbot['adapted'] = options.fitness
 
     # If graphics is enabled, starts pygame
     if options.graphics:
