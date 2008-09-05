@@ -1,0 +1,533 @@
+\input texinfo   @c -*-texinfo-*-
+
+@c %**start of header
+@setfilename springbots.info
+@settitle Springbots
+@documentencoding UTF-8
+
+@ifnottex
+@documentlanguage pt_BR
+@end ifnottex
+
+@c %**end of header
+
+@titlepage
+@title Springbots
+@subtitle Experimênto com Algoritmos Genéticos
+
+A última versão deste documento, e outros formatos, podem ser encontrados em
+@uref{http://springbots.sourceforge.net/doc/}.
+
+@sp
+
+A página oficial do projeto está hospedada em
+@uref{http://springbots.sourceforge.net/}.
+
+@sp
+
+@author Rodrigo Setti <@email{rodrigosetti@@gmail.com}>
+@end titlepage
+
+@contents
+
+@chapter Introdução
+
+
+Um algoritmo genético (AG) é uma técnica de procura utilizada na ciência da computação para achar soluções aproximadas em problemas de otimização e busca. Algoritmos genéticos são uma classe particular de algoritmos evolutivos que usam técnicas inspiradas pela biologia evolutiva como hereditariedade, mutação, seleção natural e recombinação (ou crossing over).
+
+Algoritmos genéticos são implementados como uma simulação de computador em que uma população de representações abstratas de solução é selecionada em busca de soluções melhores. A evolução geralmente se inicia a partir de um conjunto de soluções criado aleatoriamente e é realizada através de gerações. A cada geração, a adaptação de cada solução na população é avaliada, alguns indivíduos são selecionados para a próxima geração, e recombinados ou mutados para formar uma nova população. A nova população então é utilizada como entrada para a próxima iteração do algoritmo.
+
+Algoritmos genéticos diferem dos algoritmos tradicionais de otimização em basicamente quatro aspectos:
+
+@itemize @bullet
+@item
+        Se baseiam em uma codificação do conjunto das soluções possíveis, e não nos parâmetros da otimização em si;
+@item
+        os resultados são apresentados como uma população de soluções e não como uma solução única;
+@item
+        não necessitam de nenhum conhecimento derivado do problema, apenas de uma forma de avaliação do resultado;
+@item
+        usam transições probabilísticas e não regras determinísticas.
+@end itemize
+
+@section Algoritmo
+
+Os Algoritmos genéticos são em geral algoritmos simples e fáceis de serem implementados. Segue abaixo um trecho de pseudo-código descrevendo um algoritmo genético:
+
+@example
+@verbatim
+
+função AlgoritmoGenético(população, função-objetivo) saídas: indivíduo
+  entradas: população -> uma lista de indivíduos
+            função-objetivo -> uma função que recebe um indivíduo e retorna um número real.
+  repetir
+     lista de pais := seleção(população, função-objetivo)
+     população := reprodução(lista de pais)
+  enquanto nenhuma condiçao de parada for atingida
+  retorna o melhor indivíduo da população de acordo com a função-objetivo
+
+@end verbatim
+@end example
+
+A função objetivo é o objeto de nossa otimização. Pode ser um problema de otimização, um conjunto de teste para identificar os indivíduos mais aptos, ou mesmo uma "caixa preta" onde sabemos apenas o formato das entradas e nos retorna um valor que queremos otimizar. A grande vantagem dos algoritmos genéticos esta no fato de não precisarmos saber como funciona esta função objetivo, apenas tê-la disponível para ser aplicada aos indivíduos e comparar os resultados.
+
+O indivíduo é meramente um portador do seu código genético. O código genético é uma representação do espaço de busca do problema a ser resolvido, em geral na forma de seqüências de bits. Por exemplo, para otimizações em problemas cujos valores de entrada são inteiros positivos de valor menor que 255 podemos usar 8 bits, com a representação binária normal, ou ainda uma forma de código gray. Problemas com múltiplas entradas podem combinar as entradas em uma única seqüência de bits, ou trabalhar com mais de um "cromossomo", cada um representando uma das entradas. O código genético deve ser uma representação capaz de representar todo o conjunto dos valores no espaço de busca, e precisa ter tamanho finito.
+
+A seleção também é outra parte chave do algoritmo. Em geral, usa-se o algoritmo de seleção por "roleta", onde os indivíduos são ordenados de acordo com a função-objetivo e lhes são atribuídas probabilidades decrescentes de serem escolhidos. A escolha é feita então aleatóriamente de acordo com essas probabilidades. Dessa forma conseguimos escolher como pais os mais bem adaptados, sem deixar de lado a diversidade dos menos adaptados. Outras formas de seleção podem ser aplicadas dependendo do problema a ser tratado.
+
+A reprodução, tradicionalmente, é divididas em três etapas: acasalamento, recombinação e mutação. O acasalamento é a escolha de dois indivíduos para se reproduzirem (geralmente gerando dois descendentes para manter o tamanho populacional). A recombinação, ou crossing-over é um processo que imita o processo biológico homônimo na reprodução sexuada: os descendentes recebem em seu código genético parte do código genético do pai e parte do código da mãe. Esta recombinação garante que os melhores indivíduos sejam capazes de trocar entre si as informações que os levam a ser mais aptos a sobreviver, e assim gerar descendentes ainda mais aptos. Por último vem as mutações, que são feitas com probabilidade a mais baixa possível, e tem como objetivo permitir maior variabilidade genética na população, impedindo que a busca fique estagnada em um mínimo local.
+
+
+@section Programação Genética
+
+Por ser um algoritmo extremamente simples e eficiente, existem diversas variações em cima do algorítmo genético básico para se obter resultados melhores ou mesmo tratar novas classes de problemas. Uma dessas variações é a Programação genética. Na Programação genética os indivíduos representam pequenos programas de computador que serão avaliados de acordo com o resultado de sua execução. Estes programas podem ser expressões simples, como fórmulas aritméticas ou programas complexos, com operações de laço e condicionais, típicas de uma linguagem de programação comum.
+
+@chapter Projeto
+
+O objetivo deste projeto é realizar uma demonstração do uso de um algoritmo genético para solucionar um problema. Apresentaremos adiante o ``genoma'', que é o objeto que estaremos otimizando. O ``problema'', ou seja, aonde se quer chegar com o genoma e que tipos de solução são melhores ou piores e porquê. O ``método'' utilizado, e finalmente instruções para o usuário configurar e rodar seus próprios experimentos locais ou em rede, salvar e analizar os resultados da otimização e estatísticas produzidas.
+
+@section Genoma
+
+Neste projeto procuramos otimizar o que chamamos de ``Springbots''. Um springbot pode ser entendido como uma ``criatura virtual'' que vive em um mundo físico simulado. De maneira mais clara, um springbot é um grafo conexo cujos vértices possuem atributos físicos tais como inércia, posição e momentum linear. As arestas, por sua vez, exercem forças elásticas entre os vértices mantendo a ``forma'' da criatura, além de oferecerem resistência em ambientes líquidos causando empuxo.
+
+As arestas também podem ter movimento rítmico cuja frequência é senoidal. A amplitude e deslocamento são atributos variáveis nas arestas.
+
+Simulados em um ambiente bidimensional com gravidade e chão um springbot interage de maneira muito similar à objetos físicos reais, respondendo à colisões e à gravidade. Em ambientes líquidos, os springbots ao se moverem causam forças de empuxo em diferentes direções podendo provocar movimentação do centro de massa(nado).
+
+Os springbots são persistidos em formato digital através do uso de um dialeto de XML. Um arquivo XML pode armazenar não somente um, mas uma população de springbots. Os dados salvos correspodem somente ao genoma e não aos atributos físicos correntes(momentum), entretanto, a posição atual da função seno é salva para que a criatura não perca a ``sincronia''.
+
+Este é um exemplo de um arquivo XML descrevendo apenas um genoma:
+
+@example
+@verbatim
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE springbots SYSTEM "http://springbots.sourceforge.net/springbots.dtd">
+<springbots>
+    <springbot angle="0" name="Swarm-A Abem Ufo" generation="7" adapted="swim" bloodline="0:b:8:1:2:5:0">
+      <node pos="-225,8" id="S0N1" />
+      <node pos="-175,18" id="S0N2" />
+      <node pos="-125,8" id="S0N3" />
+      <node pos="-75,18" id="S0N4" />
+      <node pos="-25,8" id="S0N5" />
+      <node pos="25,18" id="S0N6" />
+      <node pos="75,8" id="S0N7" />
+      <node pos="125,18" id="S0N8" />
+      <node pos="175,8" id="S0N9" />
+      <node pos="225,18" id="S0N10" />
+      <spring from="S0N1" to="S0N2" offset="0.000" amplitude="0.600" />
+      <spring from="S0N2" to="S0N3" offset="0.628" amplitude="0.600" />
+      <spring from="S0N3" to="S0N4" offset="1.257" amplitude="0.600" />
+      <spring from="S0N4" to="S0N5" offset="1.885" amplitude="0.600" />
+      <spring from="S0N5" to="S0N6" offset="2.513" amplitude="0.600" />
+      <spring from="S0N6" to="S0N7" offset="3.142" amplitude="0.600" />
+      <spring from="S0N7" to="S0N8" offset="3.770" amplitude="0.600" />
+      <spring from="S0N8" to="S0N9" offset="4.398" amplitude="0.600" />
+      <spring from="S0N9" to="S0N10" offset="5.027" amplitude="0.600" />
+      <spring from="S0N1" to="S0N3" offset="0.000" amplitude="0.600" />
+      <spring from="S0N2" to="S0N4" offset="0.628" amplitude="0.600" />
+      <spring from="S0N3" to="S0N5" offset="1.257" amplitude="0.600" />
+      <spring from="S0N4" to="S0N6" offset="1.885" amplitude="0.600" />
+      <spring from="S0N5" to="S0N7" offset="2.513" amplitude="0.600" />
+      <spring from="S0N6" to="S0N8" offset="3.142" amplitude="0.600" />
+      <spring from="S0N7" to="S0N9" offset="3.770" amplitude="0.600" />
+      <spring from="S0N8" to="S0N10" offset="4.398" amplitude="0.600" />
+    </springbot>
+</springbots>
+
+@end verbatim
+@end example
+
+O descritor DTD oficial pode ser encontrado em @uref{http://springbots.sourceforge.net/springbots.dtd}.
+
+É importante discriminar os atributos do elemento ``springbot'':
+
+@table @strong
+@item name
+      O nome do springbot. O primeiro nome é a ``linhagem'', nunca muda e é usado para identificar a descendência original.
+@item angle
+      Valor do deslocamento do ângulo da função seno, cujo valor é utilizado pelas arestas para calcular o movimento.
+@item generation
+      Número da geração. o descendênte original inicia em zero, e cada filho herda o valor da geração do pai somado de um.
+@item adapted
+      O springbot pode discriminar o ambiente ou função para o qual está adaptado.
+@item bloodline
+      A linha de descendência é uma sequência de números hexadecimais separados por dois pontos e identifica o rastro de ancestralidade da criatura. Cada irmão tem o mesmo tamanho de linha de descendência e são idênticos exceto pelo último número, e a cada geração um número é adicionado à linha. Este valor serve para recriar árvores de descendência.
+@end table
+
+Os outros elementos do XML são ``node'' e ``spring'' e descrevem ``vértices'' e ``arestas'' respectivamente. Basicamente o ``node'' descreve sua posição e possui um identificador único. As arestas dizem quais vértices ligam, pelos identificadores, e possuem os atributos de movimento ``offset'' e ``amplitude''.
+
+O projeto acompanha um programa editor de springbots, em @file{editor/editor.py}. É muito recomendável
+o usuário utilizar o programa para se acostumar com a construção e comportamento dos springbots. O editor tem uma interface bem simples para manipular as criaturas, baseado em mouse e @emph{drag-and-drop}, com a possibilidade de abrir e salvar genomas.
+
+@section Adaptabilidade
+
+A adaptabilidade, ou @emph{fitness}, é a medida de quão otimizado ou adequado é um genoma para resolver um determinado problema, ou meta.
+O projeto define inicialmente cinco tipos de metas para as criaturas, podendo ser extendido facilmente para mais por alguém com criatividade e conhecimento de programação python. Cada meta ou função @emph{fitness} tem um método de avaliação do genoma que resulta em uma nota, um número. Quanto maior esta nota, mais adaptado ou adequado está o genoma ao problema específico.
+
+Apresentamos os cinco tipos de função @emph{fitness} e o método de operação destas:
+
+@table @strong
+@item walk
+      Simula o springbot em um ambiente com gravidade e chão por um intervalo de tempo. O valor do @emph{fitness} é a diferença horizontal do centro de massa inicial e final, desta maneira, esta função recompensa velocidade horizontal de forma que as criaturas capazes de percorrer a maior distância no intervalo tem uma nota maior.
+@item swim
+      Simula o springbot em um ambiente líquido, sem gravidade e barreiras. O valor do @emph{fitness} é a distância absoluta entre o centro de massa inicial e final, recompensando a velocidade de nado.
+@item jump
+      O springbot é simulado em um ambiente com gravidade e chão. O valor de @emph{fitness} é a diferença vertical entre a menor e maior altura de centro de massa adquirida, recompensado a capacidade de saltar.
+@item height
+      Em um ambiente com gravidade e chão, o valor da função é a proporção entre a altura média pela largura média do springbot. Esta função recompensa a altura relativa em relação a altura, incentivando soluções de estrutura ``finas''.
+@item equilibrium
+      Também em um ambiente com gravidade e chão, o valor da função é a proporção entre o centro de massa e a altura. Recompensando soluções com o centro de massa mais próximos da altura, logo, incentivando estruturas com massa(vértices) concentrados no topo.
+@end table
+
+O objetivo do algoritmo genético é otimizar as soluções para a função @emph{fitness} especifica. Cada experimento deve escolher uma destas(ou outra) função, e a população sofrerá seleção baseada na nota de adaptabilidade.
+
+@section Modus Operandi
+
+Agora que conhecemos o objeto de otimização, o springbot, e as funções de adaptabilidade, veremos como o sistema emprega um tipo de algoritmo genético para atingir o objetivo proposto.
+O algoritmo é muito similar ao pseudo-código apresentado na introdução, mas algumas diferenças foram introduzidas para incentivar a diversidade de soluções. De maneira geral, o processo funciona da seguinte maneira:
+
+@verbatim
+@example
+
+população = população inicial(randômica ou proveniente de outro experimento)
+
+repetir:
+        para cada indivíduo em população:
+             testa fitness e atribui nota
+
+        ordena população pela nota de fitness
+        realiza amostragem para descarte(morte) da metade inferior
+        filhos = cópia amostragem da metade superior(reprodução)
+
+        para cada indivíduo em filhos:
+             realiza mutação em filhos
+
+        insere filhos na população
+
+enquanto nenhuma condição de parada for atingida
+
+@end example
+@end verbatim
+
+Após muitas iterações do @emph{loop} principal é esperado que a nota média da população tenda ao crescimento. Experimentos mostraram que este crescimento se da de maneira logaritmóide.
+
+A mutação é uma operação sobre o genoma que muda algum atributo de algum elemento do grafo ou muda a própria topologia do grafio adicionando ou removendo algum elemento, de maneira geral, a mutação é uma mudaça mínima e randômica no genoma causando uma variação.
+
+Como existe no processo muita aleatoriedade(mutação e amostragens) é muito improvável, na prática impossível, de uma mesma entrada(população e @emph{fitness}) produzirem após um mesmo número de iterações um mesmo resultado.
+
+@section Ferramentas
+
+Nesta seção apresentamos as ferramentas úteis para conduzir experimentos, vizualizar e editar springbots e analisar dados de estatísticas.
+
+@subsection Editor
+
+O editor de springbots é o primeiro programa recomendado para o usuário compreender intuitivamente do que se trata o springbot e que tipos de atributos seu genôma contem. Descreveremos aqui algumas funcionalidades e operação do editor.
+
+@subsubsection Barra de ferramentas
+
+@table @strong
+@item Liquid
+      Muda para ambiente líquido(sem chão e gravidade)/não líquido(com chão e gravidade).
+@item Edit mode
+      Muda para modo de ediçao/simulação.
+@item Show Mass Center
+      Mostra centro de massa dos springbots.
+@item Show Names
+      Mostra nome dos springbots.
+@item Load Springbots
+      Carrega arquivo XML de genomas.
+@item Save Springbots
+      Salva springbots em arquivo XML de genomas.
+@item Kill Springbot
+      Mata(elimina) springbot selecionado.
+@item Change Name
+      Editar nome do springbot selecionado.
+@item Mutate
+      Efetua uma mutação aleatória no springbot selecionado.
+@item New Random
+      Insere um springbot gerado randomicamente na área de edição.
+@end table
+
+@subsubsection Área de edição/simulação
+
+Quando no modo de edição(ver barra de ferramentas):
+
+@table @strong
+@item Criar novo vértice
+      Clicar com o botão direito do mouse em um local vazio(cria novo springbot).
+@item Mover vértice
+      Arrastar vértice com botão esquerdo do mouse.
+@item Criar aresta para novo vértice
+      Clicar com o botão direito sobre um vértice e arrastar até uma posição vazia.
+@item Criar aresta para vértice existente da mesma criatura
+      Clicar com o botão direito sobre um vértice e arrastar até outro do mesmo grafo.
+@item Remover vértice
+      Clicar com botão do meio sobre o vértice(todas as arestas ligantes também serã eliminadas).
+@item Remover aresta
+      Clicar com o botão do meio sobre a aresta(o grafo será reduzido se tornar-se desconexo).
+@item Selecionar aresta
+      Clicar com o botão esquerdo do mouse sobre a aresta.
+@item Selecionas springbot
+      Clicar com o botão direito sobre qualquer elemento da criatura(vértice ou aresta).
+@end table
+
+Observe que é impossível ligar por uma aresta dois springbots diferentes.
+
+Quando no modo de simulação não é possível editar a topologia nem criar novos springbots, entretanto,
+é possível mover os vértices e editar atributos de movimento das arestas(veja no tópico adiante).
+
+
+@subsubsection Área da função senoide
+
+A área da função senoide(a direita da interface) é uma região para editar os atributos de movimentação
+das arestas. Cada aresta possui dois parâmetros de movimentação: ``amplitude'' e ``deslocamento''.
+Estes atributos são representados graficamente na área da senoide.
+
+Cada aresta tem uma barra com um nó desenhados na área da senoide. A posição vertical da barra é
+o deslocamento do movimento aresta em relação a função senoide. A posição horizontal do nó é a
+amplitude do movimento da aresta, de maneira que quanto mais distânte do centro maior o movimento. se
+o nó está no centro, a amplitude(e movimento) é nula.
+
+@subsection Geração randômica
+
+O programa @file{randombot.py} é utilizado para gerar populações de springbots randômicos. Úteis para servir de entrada para experimentos. O programa recebe alguns parâmetros da linha de comando e escreve na saída padrão(eg. @code{stdout}) o arquivo XML. Os argumentos da linha de comando são:
+
+@table @strong
+@item -p <número> ou --population=<número>
+      População de springbots randômicos a serem gerados
+@item -n <vértices> ou --nodes=<vértices>
+      Número de vértices de cada genoma
+@item -s <arestas> ou --springs=<arestas>
+      Número de arestas de cada genoma
+@item -r <raio> ou --noderadius=<raio>
+      Distância(raio) máximo entre os vértices gerados
+@end table
+
+@subsection Evolve
+
+O programa evolve é o núcleo do projeto, nele está implementado o algoritmo genético que irá ``evoluir''
+a população para uma função especificada. O evolve vem em duas versões: a versão local(@file{evolve.py}) e a versão @emph{network}(@file{net-evolve.py}) que pode ser distribuída em rede.
+
+Descreveremos primeiro as características comuns às duas versões para depois entrar em detalhes sobre a
+operação específica de cada uma.
+
+O evolve recebe via entrada padrão(eg. @code{stdin}) o XML da população inicial do experimento e escreve opcionalmente(se a opção verbose estiver setada)na saída padrão(eg. @code{stdout}) os dados estatísticos do que está ocorrendo no experimento.
+A cada determinado número de iterações(configurável pelo usuário) o programa escreve um arquivo XML com o nome @file{<prefixo>-<fitness>-p<tamanho>-i<iterações>.xml}, sendo @code{<prefixo>} um nome identificador do experimento, @code{<fitness>} o nome da função @emph{fitness} aplicada, @code{<tamanho>}, o tamanho da população e @code{<iterações>}, o número de iterações daquela população. Por exemplo, um arquivo válido pode ser @file{joao-walk-p100-i67.xml}.
+
+Os parâmetros aceitos pelo evolve na linha de comando são:
+
+@table @strong
+@item -v ou --verbose
+      Escreve dados estatísticos do experimento na saída padrão.
+@item -f <fitness> ou --fitness=<fitness>
+      Nome da função fitness aplicada, por padrão @emph{walk}.
+@item -P <prefixo> ou --prefix=<prefixo>
+      Especifica um nome para prefixar nos arquivos de população salvos. Isto é útil para não confundir saídas de diferentes experimentos. Se não for especificado, o programa cria um nome randômico para servir de prefixo.
+@item -b ou --best
+      Salva o melhor espécime a cada iteração, em um mesmo arquivo, no formato @file{<prefixo>-<fitness>-p<população>-best.xml}, eg. @file{exp13-walk-p100-best.xml}.
+@item -p <arquivo.xml> ou --population=<arquivo.xml>
+      Ao invés de ler a população da entrada padrão, lê do arquivo especificado.
+@item -s <valor> ou --save-freq <valor>
+      A cada determinado número de iterações(padrão 100), especificado por @code{<valor>}, salva a população em um arquivo xml no formato @file{<prefixo>-<fitness>-p<tamanho>-i<iterações>.xml}, eg. @file{maria-swim-p80-i22.xml}.
+@item -l <valor> ou --limit=<valor>
+      Limita em @code{<valor>} o número máximo de iterações. Por padrão o experimento nunca acaba e é interrompido somente pelo sinal de interrupção de teclado do usuário.
+@item -a <iteracao> ou --start_at<iteracao>
+      Inicia o número da primeira iteração com um valor especificado, ao invés de zero. É útil para manter a sequência de arquivos salvos de um experimento interrompido e continuado.
+@end table
+
+@subsubsection Local evolve
+
+O programa @file{evolve.py} aceita todos os parâmetros de linha de comando descrito anteriormente e mais os seguintes:
+
+@table @strong
+@item -g ou --graphics
+      Ativa gráficos em tempo real das simulações(requer pygame), este parâmetro pode desacelerar o experimento mas é bem interessante.
+@item -F ou --fullscreen
+      Se os gráficos estão ativos, mostra em tela cheia.
+@end table
+
+O evolve testa cada indivíduo na população de modo serial e opcionalmente mostra o gráfico em tempo real do que está ocorrendo.
+
+@subsubsection Network evolve
+
+O sistema de distribuição em rede do projeto Springbots é baseado na arquitetura cliente-servidor. O cliente é o programa @file{net-evolve.py}, e em um experimento existe somente um cliente rodando. Ele é reponsável pelo algoritmo genético, seleção natural, mutação, etc. Com exceção do teste de adaptabilidade, que é feito por um dos servidores conectados.
+
+Cada servidor é uma instância do programa @file{fitness-server.py} rodando na rede, e basicamente o que o servidor faz é receber requisições de testes de adaptabilidade, executar o teste e devolver a nota. Os parâmetros de linha de comando para iniciar o servidor são:
+
+@table @strong
+@item -p <porta> ou --port=<porta>
+      Porta TCP que o servidor irá escutar por conexões(padrão 8088).
+@item -v ou --verbose
+      Escreve informações dos testes na saída padrão.
+@item -g ou --graphics
+      Ativa gráficos em tempo real das simulações(requer pygame), este parâmetro pode desacelerar o experimento mas é bem interessante.
+@item -F ou --fullscreen
+      Se os gráficos estão ativos, mostra em tela cheia.
+@end table
+
+O @file{net-evolve.py} se conecta a um conjunto de servidores e envia simultaneamente pedidos de testes para os servidores disponíveis, entretanto, é necessário que o programa cliente saiba os endereços de rede aonde os servidores estão rodando, isto é feito com o uso de um arquivo de texto de configuração bem simples, no seguinte formato, por exemplo:
+
+@example
+@verbatim
+# Lista de servidores:
+
+http://192.168.0.100:8088
+http://192.168.0.101:8088
+http://192.168.0.102:8088
+http://192.168.0.103:8088
+http://192.168.0.104:8088
+http://192.168.0.105:8088
+
+@end verbatim
+@end example
+
+O programa ignora linhas iniciadas com ``#''(comentários) e linhas em branco. Cada linha especificando o servidor deve ser uma URL http válida seguido por ``:'' e a porta TCP.
+
+As opções de linha de comando do @file{net-evolve.py} são as genéricas do evolve somadas à mais uma
+
+@table @strong
+@item -n <arquivo> ou --serverslist=<arquivo>
+      Especifica o arquivo de texto de configuração contendo o endereço dos servidores de teste(padrão @file{fitness-servers.txt}).
+@end table
+
+@subsection Estatísticas
+
+Tanto o @file{evolve.py} quanto o @file{net-evolve.py}, com a opção @command{-v ou --verbose} escrevem na saída padrão estatísticas acerca do experimento envolvido. Um exemplo desta saída é:
+
+@example
+@verbatim
+
+# exp_003 experiment
+# Initiating simulation with a population of 300 specimens.
+# Evolving for walk:
+# At each iteration 60 will be discarded, 45 of the remaining will be selected cloned and mutated and 15 random springbots will be inserted
+Iteration 0:
+	1/300: "Aulaumnum"(1) 137.619
+	2/300: "Prioppegrum"(1) 65.862
+	3/300: "Proittodu"(1) 24.481
+	4/300: "Dioprialia"(1) 72.372
+	5/300: "Ujiamno"(1) 21.781
+	6/300: "Foicizae"(1) 115.870
+	7/300: "Phiaphittum"(1) 55.026
+	8/300: "Uhiapha"(1) 340.431
+	9/300: "Faettiavum"(1) 75.965
+	10/300: "Iolupae"(1) 59.812
+	11/300: "Ilaevio"(1) 218.874
+	12/300: "Coidiaee"(1) 0.165
+	13/300: "Zaraesta"(1) 0.482
+	14/300: "Droimmuppia"(1) 16.799
+	15/300: "Ahagru"(1) 58.451
+	16/300: "Friqistau"(1) 53.140
+	17/300: "Mieammem"(1) 59.089
+	18/300: "Riapparum"(1) 27.444
+...
+	294/300: "Jaedisia"(1) 42.492
+	295/300: "Ioxuzo"(1) 142.339
+	296/300: "Loibiacci"(1) 137.999
+	297/300: "Egiase"(1) 220.619
+	298/300: "Audroivem"(1) 114.466
+	299/300: "Oijauxu"(1) 34.296
+	300/300: "Aulupia"(1) 29.118
+Bloodline lenght average: 1.0000
+Fitness average: 77.2136
+Iteration 1:
+	1/300: "Uhiapha"(1) 0.969
+	2/300: "Hummallo"(1) 273.360
+	3/300: "Rursebre"(1) 278.580
+	4/300: "Aegumnem"(1) 197.639
+	5/300: "Qodiahum"(1) 357.095
+	6/300: "Loigrolum"(1) 31.281
+	7/300: "Ivoigoi"(1) 111.583
+	8/300: "Ifroppem"(1) 329.433
+...
+	294/300: "Phaummaumu"(1) 39.388
+	295/300: "Ojorsoi"(1) 11.525
+	296/300: "Uttoifrem"(1) 28.324
+	297/300: "Ugraumma"(1) 138.344
+	298/300: "Lopriobum"(1) 67.797
+	299/300: "Auroidri"(1) 50.479
+	300/300: "Uxiocem"(1) 70.993
+Bloodline lenght average: 4.4267
+Fitness average: 283.4820
+Iteration 34:
+	1/300: "Hummallo Aefroi Qe"(4) 415.008
+	2/300: "Hummallo Iabrem Dum"(5) 619.966
+	3/300: "Hujaegrem Aphem"(2) 393.573
+	4/300: "Friqistau Oiphia Sti"(4) 598.703
+	5/300: "Hummallo Hum Aefroi"(3) 544.045
+	6/300: "Driapiolia Oirsem Ra"(10) 582.507
+	7/300: "Ciosaemnoi Appa Aeeem"(5) 477.941
+	8/300: "Hummallo So Rem"(5) 327.234
+	9/300: "Hummallo Hum"(2) 485.291
+	10/300: "Ciosaemnoi Uta Pa"(6) 520.220
+	11/300: "Hummallo Aefroi Mu"(4) 570.085
+...
+
+@end verbatim
+@end example
+
+Todas as linhas iniciadas por ``#'' são consideradas comentários e não contém dados estatísitos, apenas informações para o usuário. A cada iteração do algoritmo genético ele imprime uma linha @samp{Iteration <N>:}(aonde @samp{<N>} é o número da iteração), em seguida imprime uma linha para cada teste realizado com cada genoma, esta linha tem a seguinte sintaxe:
+
+@example
+@verbatim
+
+   <N>/<TOTAL> "<NOME DA LINHAGEM> [SOBRENOME]"(<GERACAO>) <FITNESS>
+
+@end verbatim
+@end example
+
+Os Parâmetros são auto-explicativos.
+Ao final da geração o programa imprime a linha @samp{Bloodline lenght average: <N>} informando o tamanho médio da linha de descendência(@emph{bloodline}) e @samp{Fitness average: <N>}, o valor médio dos @emph{fitness}.
+
+Todos estes dados podem alimentar o programa @file{log-plot.py} que gera gráficos baseado nos dados. O @file{log-plot.py} pode gerar três tipos de gráfico: média de @emph{fitness}, @emph{fitness} individuais e histograma de @emph{fitness}. É possível filtrar os dados para mostrar gráficos de linhagens específicas, a média geral(todos) e todos exceto uma linhagem específica. Tudo isso é especificado via linha de comando:
+
+@table @strong
+@item -v ou --verbose
+      Escreve algumas informações na saída padrão sobre o processo de geração do gráfico.
+@item -l <lista> ou --lineages=<lista>
+      Especifica uma lista de linhagens separadas por vírgula para criar o gráfico. Podem ser nomes de linhagens, @samp{all}, para a média geral ou então @samp{-<linhagem>}(nome da linhagem precedido por um sinal de menos) que processa os dados
+de todos com exceção desta linhagem.
+@item -g <tipo> ou --graph=<tipo>
+      Especifica o tipo de gráfico, podendo ter três valores: @samp{averages}(média de @emph{fitness}), @samp{individual}(@emph{fitness} individuais) ou @samp{histogram}(histograma de @emph{fitness}).
+@item
+@end table
+
+Se os gráficos gerados possuem mais de um objeto de dados é gerado uma legenda automaticamente.
+
+@subsection Exemplos
+
+Os exemplos desta sessão pressupõem um shell unix, entretanto, no Windows é possível executas os scripts chamando o interpretador python(instalado geralmente em @file{C:\Python25\python.exe}).
+
+@example
+# Evolui uma populacao inicial aleatoria de 100 springbots para nadar,
+# com saída grafica em tela-cheia e log salvo
+# no arquivo @file{exp90-walk-p100.log}
+
+$ @command{./randombot.py -p 100 | ./evolve.py -vgFf walk -P exp90 > \}
+  @command{exp90-walk-p100.log}
+@end example
+
+@example
+# Inicia dois servidores locais e evolui uma populacao de um
+# experimento anterior à partir da iteração 400 para
+# nadar(@emph{swim}), salvando o log em um arquivo.
+
+$ @command{./fitness-server.py -p 8089 &}
+$ @command{./fitness-server.py -p 8090 &}
+$ @command{cat 'http://localhost:8089 > servidores.txt}
+$ @command{cat 'http://localhost:8090 >> servidores.txt}
+$ @command{./net-evolve.py -vn servidores.txt -f swim -a 400 -P exp88 \}
+  @command{< exp88-swim-i400-p100.xml > exp88-swim-p100.log}
+@end example
+
+@example
+# Plota um grafico de média de @emph{fitness} comparando a média geral
+# com a média da linhagem "Stiburstum".
+
+$ @command{./log-plot.py -g averages -l all,oqoira < exp88-swim-p100.log}
+@end example
+
+Em sistemas que não suportam pipe(@command{|}) uma alternativa é direcionar a saída para um arquivo para em seguida em outro comando direcionar esse arquivo para a entrada.
+
+@bye

@@ -22,8 +22,8 @@ import xmlrpclib
 # To sample from the population
 from random import sample
 
-# To strip server list names
-from string import strip
+# To strip server list names and lowercase strings
+from string import strip, lower
 
 # To create a thread for each xmlrpc server
 from threading import Thread
@@ -105,7 +105,7 @@ class FitnessThread(Thread):
 
 def network_evolve(save_freq=100, limit=0,
         verbose=False, discard_fraction=0.4, random_insert=0.1,
-        best=False):
+        best=False, start_iteration = 0, prefix=''):
     """
     Given the initial population 'population', executes
     a genetic algorithm to evolve them for best fitness.
@@ -119,7 +119,7 @@ def network_evolve(save_freq=100, limit=0,
     elif discard_fraction + random_insert > 1:
         raise ValueError("the sum of discard_fraction and random_insert must not be greater than 1")
 
-    iter = 1 # Initial iteration
+    iter = start_iteration # Initial iteration
 
     # Calculate amount of discarded and random population
     discarded = int(len(population)/2 * discard_fraction)
@@ -130,7 +130,7 @@ def network_evolve(save_freq=100, limit=0,
         print "# Evolving for %s:" % (fitness_function)
         print "# At each iteration %d will be discarded, %d of the remaining will" %\
         (discarded, discarded-randoms),
-        print "# be selected cloned and mutated and %d random springbots will be inserted" %\
+        print " be selected cloned and mutated and %d random springbots will be inserted" %\
         (randoms)
 
     # Turn all population into NetworkEvolveSpringbot
@@ -198,7 +198,7 @@ def network_evolve(save_freq=100, limit=0,
             # Test if it is time to save population
             if iter % save_freq == 0:
                 # Saves the current population
-                filename = "%s-p%d-i%d.xml" % (fitness_function, len(population), iter)
+                filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iter)
                 store_xml(population, filename)
 
                 if verbose:
@@ -206,7 +206,7 @@ def network_evolve(save_freq=100, limit=0,
 
             # Saves best if asked
             if best:
-                filename = "%s-p%d-best.xml" % (fitness_function, len(population))
+                filename = "%s-%s-p%d-best.xml" % (prefix, fitness_function, len(population))
                 store_xml(population[:1], filename)
 
                 if verbose:
@@ -228,7 +228,7 @@ def network_evolve(save_freq=100, limit=0,
     population.sort(reverse=True)
 
     # Now, saves the current population and quit
-    filename = "%s-p%d-i%d.xml" % (fitness_function, len(population), iter)
+    filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iter)
     store_xml(population, filename)
     if verbose:
         print
@@ -258,6 +258,10 @@ if __name__ == "__main__":
     parser.add_option("-n", "--serverslist", dest="serverslist", default='fitness-servers.txt',
             help="File which contains the url of the servers providing fitness service, defaults to fitness-servers.txt",
             metavar="FILENAME")
+    parser.add_option("-a", "--start-at", dest="start_at", default=0,
+            help="Start couting from iteration(default is zero)", metavar="ITERATION")
+    parser.add_option("-P", "--prefix", dest="prefix", default=None,
+            help="Append a prefix to population file names saved, default is a random name", metavar="PREFIX")
     (options, args) = parser.parse_args()
 
     # Reads fitness servers
@@ -269,6 +273,10 @@ if __name__ == "__main__":
 
     options.save_freq = int(options.save_freq)
     options.limit = int(options.limit)
+    options.start_at = int(options.start_at)
+
+    options.prefix = options.prefix if options.prefix is not None else lower(latimname(3))
+    if options.verbose: print "# %s experiment." % options.prefix
 
     # Reads the initial population
     population = load_xml(options.arquivo if options.arquivo else sys.stdin)
@@ -276,4 +284,5 @@ if __name__ == "__main__":
     # Starts the simulation
     network_evolve(
             save_freq=options.save_freq, limit=options.limit,
-            verbose=options.verbose, best=options.best)
+            verbose=options.verbose, best=options.best, 
+            start_iteration=options.start_at, prefix=options.prefix)

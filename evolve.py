@@ -22,6 +22,9 @@ from springbots import fitness
 # To sample from the population
 from random import sample
 
+# To lowercase strings
+from string import lower
+
 try:
     import pygame
     HAS_PYGAME = True
@@ -42,7 +45,7 @@ WIDTH, HEIGHT = 640, 400
 def serial_evolve(population, fitness=fitness.walk, save_freq=100,
         limit=0,
         verbose=False, graphics=False, discard_fraction=0.4, random_insert=0.1,
-        best=False):
+        best=False, start_iteration = 0, prefix=''):
 
     """
     Given the initial population 'population', executes
@@ -55,7 +58,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
     elif discard_fraction + random_insert > 1:
         raise ValueError("the sum of discard_fraction and random_insert must not be greater than 1")
 
-    iter = 1 # Initial iteration
+    iter = start_iteration # Initial iteration
 
     # Calculate amount of discarded and random population
     discarded = int(len(population)/2 * discard_fraction)
@@ -66,7 +69,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
         print "# Evolving for %s:" % (fitness.__name__)
         print "# At each iteration %d will be discarded, %d of the remaining will" %\
         (discarded, discarded-randoms),
-        print "# be selected cloned and mutated and %d random springbots will be inserted" %\
+        print " be selected cloned and mutated and %d random springbots will be inserted" %\
         (randoms)
 
     # Transforms population into evolvespringbots
@@ -129,7 +132,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
             # Test if it is time to save population
             if iter % save_freq == 0:
                 # Saves the current population
-                filename = "%s-p%d-i%d.xml" % (fitness.__name__, len(population), iter)
+                filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness.__name__, len(population), iter)
                 store_xml(population, filename)
 
                 if verbose:
@@ -137,7 +140,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
 
             # Saves best if asked
             if best:
-                filename = "%s-p%d-best.xml" % (fitness.__name__, len(population))
+                filename = "%s-%s-p%d-best.xml" % (prefix, fitness.__name__, len(population))
                 store_xml(population[:1], filename)
 
                 if verbose:
@@ -153,7 +156,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
     population.sort(reverse=True)
 
     # Now, saves the current population and quit
-    filename = "%s-p%d-i%d.xml" % (fitness.__name__, len(population), iter)
+    filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness.__name__, len(population), iter)
     store_xml(population, filename)
     if verbose:
         print
@@ -185,6 +188,10 @@ if __name__ == "__main__":
             help="Frequency the simulation saves the current population, default is each 100 iterations", metavar="NUMBER")
     parser.add_option("-l", "--limit", dest="limit", default=0,
             help="Evolves to a limit number of iterations, default is endless", metavar="ITERATIONS")
+    parser.add_option("-a", "--start-at", dest="start_at", default=0,
+            help="Start couting from iteration(default is zero)", metavar="ITERATION")
+    parser.add_option("-P", "--prefix", dest="prefix", default=None,
+            help="Append a prefix to population file names saved, default is a random name", metavar="PREFIX")
     parser.add_option("-f", "--fitness", dest="fitness", default="walk",
             help="Fitness function used to evolve, default is walk", metavar="FITNESS")
     (options, args) = parser.parse_args()
@@ -197,6 +204,10 @@ if __name__ == "__main__":
 
     options.save_freq = int(options.save_freq)
     options.limit = int(options.limit)
+    options.start_at = int(options.start_at)
+
+    options.prefix = options.prefix if options.prefix is not None else lower(latimname(3))
+    if options.verbose: print "# %s experiment." % options.prefix
 
     # Reads the initial population
     init_population = load_xml(options.arquivo if options.arquivo else sys.stdin)
@@ -213,7 +224,7 @@ if __name__ == "__main__":
     serial_evolve(init_population, fitness, save_freq=options.save_freq,
             limit=options.limit,
             verbose=options.verbose, graphics=options.graphics,
-            best=options.best)
+            best=options.best, start_iteration=options.start_at, prefix=options.prefix)
 
     if options.graphics:
         pygame.quit()
