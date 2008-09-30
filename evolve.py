@@ -43,7 +43,7 @@ WIDTH, HEIGHT = 640, 400
 #                                                                              #
 
 def serial_evolve(population, fitness=fitness.walk, save_freq=100,
-        limit=0,
+        limit=-1,
         verbose=False, graphics=False, discard_fraction=0.4, random_insert=0.1,
         best=False, start_iteration = 0, prefix=''):
 
@@ -186,7 +186,7 @@ if __name__ == "__main__":
             help="Save best each iteration", action="store_true")
     parser.add_option("-s", "--save-freq", dest="save_freq", default=100,
             help="Frequency the simulation saves the current population, default is each 100 iterations", metavar="NUMBER")
-    parser.add_option("-l", "--limit", dest="limit", default=0,
+    parser.add_option("-l", "--limit", dest="limit", default=-1,
             help="Evolves to a limit number of iterations, default is endless", metavar="ITERATIONS")
     parser.add_option("-a", "--start-at", dest="start_at", default=0,
             help="Start couting from iteration(default is zero)", metavar="ITERATION")

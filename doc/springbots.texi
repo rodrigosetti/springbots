@@ -8,7 +8,6 @@
 @ifnottex
 @documentlanguage pt_BR
 @end ifnottex
-
 @c %**end of header
 
 @titlepage
@@ -59,12 +58,12 @@ Os Algoritmos genéticos são em geral algoritmos simples e fáceis de serem imp
 
 função AlgoritmoGenético(população, função-objetivo) saídas: indivíduo
   entradas: população -> uma lista de indivíduos
-            função-objetivo -> uma função que recebe um indivíduo e retorna um número real.
+            função-objetivo -> recebe um indivíduo e retorna um número real.
   repetir
      lista de pais := seleção(população, função-objetivo)
      população := reprodução(lista de pais)
   enquanto nenhuma condiçao de parada for atingida
-  retorna o melhor indivíduo da população de acordo com a função-objetivo
+  retorna o melhor indivíduo de acordo com a função-objetivo
 
 @end verbatim
 @end example
@@ -96,15 +95,21 @@ Simulados em um ambiente bidimensional com gravidade e chão um springbot intera
 
 Os springbots são persistidos em formato digital através do uso de um dialeto de XML. Um arquivo XML pode armazenar não somente um, mas uma população de springbots. Os dados salvos correspodem somente ao genoma e não aos atributos físicos correntes(momentum), entretanto, a posição atual da função seno é salva para que a criatura não perca a ``sincronia''.
 
+A figura abaixo é uma representação gráfica de um springbot com alguns vetores representando forças e momentos:
+
+@center @image{img/springs,140mm,,,}
+
 Este é um exemplo de um arquivo XML descrevendo apenas um genoma:
 
 @example
 @verbatim
 
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE springbots SYSTEM "http://springbots.sourceforge.net/springbots.dtd">
+<!DOCTYPE springbots SYSTEM 
+          "http://springbots.sourceforge.net/springbots.dtd">
 <springbots>
-    <springbot angle="0" name="Swarm-A Abem Ufo" generation="7" adapted="swim" bloodline="0:b:8:1:2:5:0">
+    <springbot angle="0" name="Swarm-A Abem Ufo" generation="7" 
+     adapted="swim" bloodline="0:b:8:1:2:5:0">
       <node pos="-225,8" id="S0N1" />
       <node pos="-175,18" id="S0N2" />
       <node pos="-125,8" id="S0N3" />
@@ -138,7 +143,8 @@ Este é um exemplo de um arquivo XML descrevendo apenas um genoma:
 @end verbatim
 @end example
 
-O descritor DTD oficial pode ser encontrado em @uref{http://springbots.sourceforge.net/springbots.dtd}.
+O descritor DTD oficial pode ser encontrado em 
+@uref{springbots.sourceforge.net/springbots.dtd}.
 
 É importante discriminar os atributos do elemento ``springbot'':
 
@@ -187,10 +193,10 @@ O objetivo do algoritmo genético é otimizar as soluções para a função @emp
 Agora que conhecemos o objeto de otimização, o springbot, e as funções de adaptabilidade, veremos como o sistema emprega um tipo de algoritmo genético para atingir o objetivo proposto.
 O algoritmo é muito similar ao pseudo-código apresentado na introdução, mas algumas diferenças foram introduzidas para incentivar a diversidade de soluções. De maneira geral, o processo funciona da seguinte maneira:
 
-@verbatim
 @example
+@verbatim
 
-população = população inicial(randômica ou proveniente de outro experimento)
+população = população inicial(randômica ou de outro experimento)
 
 repetir:
         para cada indivíduo em população:
@@ -207,8 +213,12 @@ repetir:
 
 enquanto nenhuma condição de parada for atingida
 
-@end example
 @end verbatim
+@end example
+
+A figura abaixo mostra o mesmo algoritmo em formato de fluxograma:
+
+@center @image{img/genetic-algorithm,140mm,,,}
 
 Após muitas iterações do @emph{loop} principal é esperado que a nota média da população tenda ao crescimento. Experimentos mostraram que este crescimento se da de maneira logaritmóide.
 
@@ -223,6 +233,8 @@ Nesta seção apresentamos as ferramentas úteis para conduzir experimentos, viz
 @subsection Editor
 
 O editor de springbots é o primeiro programa recomendado para o usuário compreender intuitivamente do que se trata o springbot e que tipos de atributos seu genôma contem. Descreveremos aqui algumas funcionalidades e operação do editor.
+
+@center @image{img/editor,140mm,,,}
 
 @subsubsection Barra de ferramentas
 
@@ -309,6 +321,8 @@ O programa @file{randombot.py} é utilizado para gerar populações de springbot
 O programa evolve é o núcleo do projeto, nele está implementado o algoritmo genético que irá ``evoluir''
 a população para uma função especificada. O evolve vem em duas versões: a versão local(@file{evolve.py}) e a versão @emph{network}(@file{net-evolve.py}) que pode ser distribuída em rede.
 
+@center @image{img/viewer,140mm,,,}
+
 Descreveremos primeiro as características comuns às duas versões para depois entrar em detalhes sobre a
 operação específica de cada uma.
 
@@ -353,6 +367,8 @@ O evolve testa cada indivíduo na população de modo serial e opcionalmente mos
 
 O sistema de distribuição em rede do projeto Springbots é baseado na arquitetura cliente-servidor. O cliente é o programa @file{net-evolve.py}, e em um experimento existe somente um cliente rodando. Ele é reponsável pelo algoritmo genético, seleção natural, mutação, etc. Com exceção do teste de adaptabilidade, que é feito por um dos servidores conectados.
 
+@center @image{img/net-evolve,140mm,,,}
+
 Cada servidor é uma instância do programa @file{fitness-server.py} rodando na rede, e basicamente o que o servidor faz é receber requisições de testes de adaptabilidade, executar o teste e devolver a nota. Os parâmetros de linha de comando para iniciar o servidor são:
 
 @table @strong
@@ -390,6 +406,34 @@ As opções de linha de comando do @file{net-evolve.py} são as genéricas do ev
 @item -n <arquivo> ou --serverslist=<arquivo>
       Especifica o arquivo de texto de configuração contendo o endereço dos servidores de teste(padrão @file{fitness-servers.txt}).
 @end table
+
+@subsubsection Exemplos de Simulações
+
+Os exemplos desta sessão pressupõem um shell unix, entretanto, no Windows é possível executas os scripts chamando o interpretador python(instalado geralmente em @file{C:\Python25\python.exe}).
+
+@example
+# Evolui uma populacao inicial aleatoria de 100 springbots para nadar,
+# com saída grafica em tela-cheia e log salvo
+# no arquivo @file{exp90-walk-p100.log}
+
+$ @command{./randombot.py -p 100 | ./evolve.py -vgFf walk -P exp90 > \}
+  @command{exp90-walk-p100.log}
+@end example
+
+@example
+# Inicia dois servidores locais e evolui uma populacao de um
+# experimento anterior à partir da iteração 400 para
+# nadar(@emph{swim}), salvando o log em um arquivo.
+
+$ @command{./fitness-server.py -p 8089 &}
+$ @command{./fitness-server.py -p 8090 &}
+$ @command{cat 'http://localhost:8089 > servidores.txt}
+$ @command{cat 'http://localhost:8090 >> servidores.txt}
+$ @command{./net-evolve.py -vn servidores.txt -f swim -a 400 -P exp88 \}
+  @command{< exp88-swim-i400-p100.xml > exp88-swim-p100.log}
+@end example
+
+Em sistemas que não suportam pipe(@command{|}) uma alternativa é direcionar a saída para um arquivo para em seguida em outro comando direcionar esse arquivo para a entrada.
 
 @subsection Estatísticas
 
@@ -495,39 +539,43 @@ de todos com exceção desta linhagem.
 
 Se os gráficos gerados possuem mais de um objeto de dados é gerado uma legenda automaticamente.
 
-@subsection Exemplos
+@subsubsection Exemplos Gráficos
 
-Os exemplos desta sessão pressupõem um shell unix, entretanto, no Windows é possível executas os scripts chamando o interpretador python(instalado geralmente em @file{C:\Python25\python.exe}).
+Todos os exemplos gráficos a seguir usam o mesmo conjunto de dados de um experimento, salvo no arquivo @file{abc-walk-p100.log}. Neste experimento uma população de 100 springbots evoluiu para andar durante 213 iterações. Ocorreu que a linhagem ``Oqoria'' se tornou dominante a partir da iteração 50, mesmo com infusões randômicas após a extinção das linhagens competidoras, nenhuma outra consegui se estabelecer. Estes gráficos mostram alguns pontos de vista.
 
 @example
-# Evolui uma populacao inicial aleatoria de 100 springbots para nadar,
-# com saída grafica em tela-cheia e log salvo
-# no arquivo @file{exp90-walk-p100.log}
-
-$ @command{./randombot.py -p 100 | ./evolve.py -vgFf walk -P exp90 > \}
-  @command{exp90-walk-p100.log}
+@center @image{img/walk-100-av-all-oqoira,140mm,,,}
+@command{$ ./log-plot.py -g av -l all,oqoira < abc-walk-p100.log}
+Média de @emph{fitness} geral comparada com a
+média da linhagem Oqoira: A média geral acompanha
+o crescimento da linhagem dominante mas se mantém 
+sempre abaixo, devido às infusões randômicas.
 @end example
 
 @example
-# Inicia dois servidores locais e evolui uma populacao de um
-# experimento anterior à partir da iteração 400 para
-# nadar(@emph{swim}), salvando o log em um arquivo.
-
-$ @command{./fitness-server.py -p 8089 &}
-$ @command{./fitness-server.py -p 8090 &}
-$ @command{cat 'http://localhost:8089 > servidores.txt}
-$ @command{cat 'http://localhost:8090 >> servidores.txt}
-$ @command{./net-evolve.py -vn servidores.txt -f swim -a 400 -P exp88 \}
-  @command{< exp88-swim-i400-p100.xml > exp88-swim-p100.log}
+@center @image{img/walk-100-hist-non_oqoira-oqoira,140mm,,,}
+@command{$ ./log-plot.py -g hist -l oqoira,-oqoira < abc-walk-p100.log}
+Histograma de @emph{fitness} comparando a linhagem Oqoira 
+com todas as não-Oqoiras: A linhagem dominante, também de 
+população dominante, está concentrada em torno do @emph{fitness} 
+900, existe uma distribuição uniforme nesse meio devido às 
+mutações deletérias. O  restante da população não-Oqoira
+concentra-se principalmente em @emph{fitness} zero(infusões 
+randômicas) e um pouco em torno de 600(linhagens que competiram 
+mas foram extintas).
 @end example
 
 @example
-# Plota um grafico de média de @emph{fitness} comparando a média geral
-# com a média da linhagem "Stiburstum".
-
-$ @command{./log-plot.py -g averages -l all,oqoira < exp88-swim-p100.log}
+@center @image{img/walk-100-ind-all-non_oqoira-oqoira,140mm,,,}
+@command{$ ./log-plot.py -g ind -l all,oqoira,-oqoira < abc-walk-p100.log}
+@emph{Fitness} individual comparando a média geral, a linhagem 
+Oqoira e os não-Oqoira: Observa-se a concentração da linhagem 
+principal em uma linha evolutiva logaritmóide, os não-Oqoira 
+evolutiram até se extinguirem em torno da iteração 50, o restante, 
+são infusões randômicas concentrados no @emph{fitness} zero, nota-se 
+que é muito improvável que um espécime aleatório venha a competir 
+com a linhagem dominante, que já se encontra bem evoluída após 
+monopolizar o experimento.
 @end example
-
-Em sistemas que não suportam pipe(@command{|}) uma alternativa é direcionar a saída para um arquivo para em seguida em outro comando direcionar esse arquivo para a entrada.
 
 @bye

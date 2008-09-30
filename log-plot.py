@@ -175,7 +175,12 @@ if __name__ == "__main__":
         pylab.ylabel("fitness average")
 
         for n, name in enumerate(averages):
-            pylab.plot(averages[name], COLORS[n % len(COLORS)], label=name, lw=2)
+            if len(averages[name]) > 0:
+                unique = len([x for x in averages[name] if x is not None]) == 1
+                pylab.plot(averages[name], COLORS[n % len(COLORS)] + ('^' if unique else '-'), 
+                           label=name, lw=2)
+            else:
+                sys.stderr.write("Warning: %s have no data.\n" % name)
 
         if len(averages) == 1:
             pylab.title("Fitness average for " + averages.keys()[0])
@@ -216,8 +221,11 @@ if __name__ == "__main__":
         pylab.ylabel("fitness")
 
         for n, name in enumerate(individual):
-            pylab.plot(individual[name][0], individual[name][1], 
-                       COLORS[n % len(COLORS)] + ("o" if name != 'all' else '-'), label=name, lw=2)
+            if len(individual[name][0]) > 0:
+                pylab.plot(individual[name][0], individual[name][1], 
+                           COLORS[n % len(COLORS)] + ("o" if name != 'all' else '-'), label=name, lw=2)
+            else:
+                sys.stderr.write("Warning: %s have no data.\n" % name)
 
         if len(individual) == 1:
             pylab.title("Fitness tests for " + individual.keys()[0])
@@ -263,6 +271,9 @@ if __name__ == "__main__":
             if len(histogram[name]) > 0:
                 _, _, x = pylab.hist(histogram[name], 100, fc=COLORS[n % len(COLORS)], 
                                      ec=COLORS[n % len(COLORS)], alpha=alpha, label=name)
+            else:
+                sys.stderr.write("Warning: %s have no data.\n" % name)
+
             h.append(x[0])
 
         if len(histogram) == 1:
