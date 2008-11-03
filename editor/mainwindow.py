@@ -59,8 +59,46 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtCore.QObject.connect(self.showMassCenterAct, QtCore.SIGNAL("toggled(bool)"), self.showMassCenter)
         QtCore.QObject.connect(self.showNamesAct, QtCore.SIGNAL("toggled(bool)"), self.showNames)
         QtCore.QObject.connect(self.aboutAct, QtCore.SIGNAL("triggered(bool)"), self.about)
+        QtCore.QObject.connect(self.crossoverAct, QtCore.SIGNAL("triggered(bool)"), self.crossover)
 
-        self.timer.start(15)
+        self.timer.start(30)
+
+
+    #
+    # Crossover
+    #
+    def crossover(self, toggle):
+        global springbots
+
+        if len(springbots) < 2:
+            QtGui.QMessageBox.warning(self, 'The number os springbots in the space must be equal or greater than two')
+        else:
+
+            # Pega tamanho da tela
+            width, height = self.space.size().width(), self.space.size().height()
+
+            # Crossover all
+            new = None
+            for springbot in springbots:
+                if new is None:
+                    new = springbot
+                else:
+                    new = springbot.crossover(new)
+
+            if len(new.nodes) > 0:
+                # Seta cor aleatoria
+                new.cor = random.choice(space.CORES)
+
+                # Posiciona
+                x1, y1, x2, y2 = new.boundingBox()
+                tr_x = random.randint(int(min(x2-x1, width-(x2-x1))), int(max(x2-x1, width-(x2-x1))))
+                tr_y = random.randint(int(min(y2-y1, height-(y2-y1))), int(max(y2-y1, height-(y2-y1))))
+
+                for node in new.nodes:
+                    node.pos.x += tr_x
+                    node.pos.y += tr_y
+
+                springbots.append(new)
 
     #
     # Muda gravidade
@@ -89,12 +127,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             springbots.remove(space.selected_springbot)
 
             space.focus_spring = space.selected_spring = None
-            self.space.focus_node = self.space.selected_noe = None
+            self.space.focus_node = self.space.selected_node = None
             space.selected_springbot =  random.choice(springbots) if springbots else None
 
         else:
             QtGui.QMessageBox.warning(self, 'Kill Springbot',
-"Please select a Springbots to kill.", QtGui.QMessageBox.Ok)
+                                      "Please select a Springbots to kill.", QtGui.QMessageBox.Ok)
 
 
     #
@@ -105,12 +143,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Verifica se esta selecionado
         if space.selected_springbot:
-            text, ok = QtGui.QInputDialog.getText(self, "Springbot name", "name", QtGui.QLineEdit.Normal, space.selected_springbot.name)
+            text, ok = QtGui.QInputDialog.getText(self, "Springbot name", "name",
+                                                  QtGui.QLineEdit.Normal, space.selected_springbot['name'])
             if ok:
                 space.selected_springbot.name = text
         else:
             QtGui.QMessageBox.warning(self, 'Change name',
-"Please select a Springbots first.", QtGui.QMessageBox.Ok)
+                                      "Please select a Springbots first.", QtGui.QMessageBox.Ok)
     #
     # Carrega Springbots
     #
@@ -157,7 +196,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 store_xml(springbots, filename)
         else:
             QtGui.QMessageBox.warning(self, 'Save springbots',
-"There are no Springbots to save.", QtGui.QMessageBox.Ok)
+                                      "There are no Springbots to save.", QtGui.QMessageBox.Ok)
 
     #
     # Add New Random
@@ -193,7 +232,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         else:
             QtGui.QMessageBox.warning(self, 'Mutate Springbot',
-"Please select a Springbot to mutate.", QtGui.QMessageBox.Ok)
+                                      "Please select a Springbot to mutate.", QtGui.QMessageBox.Ok)
 
     #
     # About
@@ -207,7 +246,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def showMassCenter(self, toggle):
         global show_mass_center
 
-        show_mass_center = toggle       #
+        show_mass_center = toggle
 
     #
     # Mostra nomes

@@ -42,10 +42,18 @@ WIDTH, HEIGHT = 640, 400
 ################################################################################
 #                                                                              #
 
+
+def cmp_springbots(A, B):
+    """
+    Compares two springbots by its fitness
+    """
+    return cmp(A['fitness'], B['fitness'])
+
+
 def serial_evolve(population, fitness=fitness.walk, save_freq=100,
         limit=-1,
         verbose=False, graphics=False, discard_fraction=0.4, random_insert=0.1,
-        best=False, start_iteration = 0, prefix=''):
+        best=False, start_iteration = 1, prefix=''):
 
     """
     Given the initial population 'population', executes
@@ -102,7 +110,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 print "Fitness average: %.4f" % (fitness_sum/float(len(population)))
 
             # Now Order population by its fitness
-            population.sort(reverse=True)
+            population.sort(cmp=cmp_springbots, reverse=True)
 
             # Discards some of the worse half
             for specimen in sample(population[len(population)/2:], discarded + randoms):
@@ -188,8 +196,8 @@ if __name__ == "__main__":
             help="Frequency the simulation saves the current population, default is each 100 iterations", metavar="NUMBER")
     parser.add_option("-l", "--limit", dest="limit", default=-1,
             help="Evolves to a limit number of iterations, default is endless", metavar="ITERATIONS")
-    parser.add_option("-a", "--start-at", dest="start_at", default=0,
-            help="Start couting from iteration(default is zero)", metavar="ITERATION")
+    parser.add_option("-a", "--start-at", dest="start_at", default=1,
+            help="Start couting from iteration(default is one)", metavar="ITERATION")
     parser.add_option("-P", "--prefix", dest="prefix", default=None,
             help="Append a prefix to population file names saved, default is a random name", metavar="PREFIX")
     parser.add_option("-f", "--fitness", dest="fitness", default="walk",

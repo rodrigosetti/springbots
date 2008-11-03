@@ -73,11 +73,17 @@ class Springbot(object):
         return self._info[key]
 
     def __setitem__(self, key, value):
-        """
+    	"""
         Gets an info inten like a dictionary
         """
         self._info[key] = value
         return value
+
+    def __iter__(self):
+        """
+        Iterate between _info values
+        """
+        return self._info.__iter__()
 
     def refresh(self, atr=AIR_RESISTANCE, grav=GRAVITY, elast=ELASTICITY, visc=0, moving=True):
         """
@@ -91,6 +97,16 @@ class Springbot(object):
 
         if moving:
             self['angle'] += ANGLE_STEP
+
+    def getNode(self, id):
+        """
+        Get node from id, None if id does not exists
+        """
+        for node in self.nodes:
+            if node.id == id:
+                return node
+        else:
+            return None
 
     def loadXML(self, file=sys.stdin):
         """
@@ -121,7 +137,7 @@ class Springbot(object):
         for node in self.nodes:
             colision_strenght += node.colideWall(limit, side, atr_normal, atr_surface, min_vel, radius)
 
-        return colision_strenght/len(self.nodes)
+        return colision_strenght/len(self.nodes) if len(self.nodes) > 0 else 0
 
     def __len__(self):
         """
@@ -238,6 +254,25 @@ class Springbot(object):
 
         # Se resta algum node em allnode, entao o springbot eh desconexo
         return allnodes
+
+    def removeUnconnected(self):
+        """
+        Remove all nodes and springs unconnected
+        """
+        uncon_nodes = self.unconnected()
+
+        # Remove os nodos nao conectados
+        for node in uncon_nodes:
+            self.nodes.remove(node)
+
+        # Remove todas as springs que pertencem a nodos nao conectados
+        uncon_springs = []
+        for spring in self.springs:
+            if spring.a in uncon_nodes or spring.b in uncon_nodes:
+                uncon_springs.append(spring)
+
+        for spring in uncon_springs:
+            self.springs.remove(spring)
 
     def __repr__(self):
         return "<Springbot %s: %d nodes, %d springs>" % (self['name'], len(self.nodes), len(self.springs))

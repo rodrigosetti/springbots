@@ -1,4 +1,4 @@
-from springbot import *
+from springbot import Springbot
 from gear import *
 
 # Importa random para mutacao e geracao randomica de springbot
@@ -36,9 +36,9 @@ class EvolveSpringbot(Springbot):
         global _bloodline_count
 
         if random:
-            Springbot.__init__(self, parent=random_springbot())
+            super(EvolveSpringbot, self).__init__(parent=random_springbot())
         else:
-            Springbot.__init__(self, parent, name, startangle)
+            super(EvolveSpringbot, self).__init__(parent, name, startangle)
 
         if not parent:
             self['fitness'] = 0
@@ -46,12 +46,6 @@ class EvolveSpringbot(Springbot):
 
         self._bloodline_count = 0
         _bloodline_count += 1
-
-    def __cmp__(self, other):
-        """
-        Compares two springbots by its fitness
-        """
-        return cmp(self['fitness'], other['fitness'])
 
     def generations(self):
         """
@@ -70,21 +64,76 @@ class EvolveSpringbot(Springbot):
         """
         Crosses this springbot with another one, returning a new one
         """
+        global _bloodline_count
+
         # Create new springbot
-        newspringbot = EvolveSpringbot(name=latimname(5))
+        breed = EvolveSpringbot()
 
-        # At first select half of the connected nodes of the first
+        # Breed springbots info
+        for key in self:
+            breed[key] = self[key]
 
-        # Then, select half of the connected nodes of the second
+        breed['fitness'] = 0
+        breed['name'] = ' '.join(set(self['name'].split() + other['name'].split()))
+        breed['adapted'] = "random"
 
-        # Now, make some links between them
+        # Set bloodline
+        try:
+            breed['bloodline'] += 'X' + \
+                other['bloodline'].split(BLOODLINE_SEP)[0] + '...' + other['bloodline'].split(BLOODLINE_SEP)[-2] + \
+                BLOODLINE_SEP
+        except KeyError:
+            pass
 
-        # Finnaly, fixes the node count
+        # For each spring in self and other
+        for springA, springB in zip(self.springs + ([None] * ((len(other.springs)-len(self.springs))/2)),
+                                    other.springs + ([None] * ((len(self.springs)-len(other.springs))/2))):
+
+            if springA is None: springA = springB
+            elif springB is None: springB = springA
+
+            # Select spring
+            spring = random.choice([springA,springB])
+
+            # Select node A
+            nodeA = breed.getNode(spring.a.id)
+            if nodeA is None:
+                nodeA = random.choice([self,other]).getNode(spring.a.id)
+                if nodeA is None: nodeA = spring.a
+
+                # Create node A
+                new_nodeA = Node(nodeA.pos, nodeA.vel, nodeA.acc)
+                new_nodeA.id = nodeA.id
+                nodeA = new_nodeA
+
+                # Add node A
+                breed.add(nodeA)
+
+            # Select node B
+            nodeB = breed.getNode(spring.b.id)
+            if nodeB is None:
+                nodeB = random.choice([self,other]).getNode(spring.b.id)
+                if nodeB is None: nodeB = spring.b
+
+                # Create node B
+                new_nodeB = Node(nodeB.pos, nodeB.vel, nodeB.acc)
+                new_nodeB.id = nodeB.id
+                nodeB = new_nodeB
+
+                # Add node B
+                breed.add(nodeB)
+
+            # Add created spring
+            breed.add(Spring(nodeA, nodeB, spring.amplitude,
+                             spring.offset, spring.normal))
+
+        # Remove unconnected elements
+        breed.removeUnconnected()
 
         # Return new
-        return newspringbot
+        return breed
 
-    def mutate(self, newnodedist=50, nodevariation=10):
+    def mutate(self, newnodedist=100, nodevariation=10):
         """
         Mutates a random structure of the springbot, which may be
         adding or removing a node, adding or removing a spring,
@@ -203,20 +252,8 @@ def random_springbot(nodes_num=10, springs_num=30, noderadius=100):
             # Adiciona nova spring
             springbot.add(Spring(a, b, offset=random.uniform(0,pi*2), amplitude=random.uniform(-0.5, 0.5)))
 
-    uncon_nodes = springbot.unconnected()
-
-    # Remove os nodos nao conectados
-    for node in uncon_nodes:
-        springbot.nodes.remove(node)
-
-    # Remove todas as springs que pertencem a nodos nao conectados
-    uncon_springs = []
-    for spring in springbot.springs:
-        if spring.a in uncon_nodes or spring.b in uncon_nodes:
-            uncon_springs.append(spring)
-
-    for spring in uncon_springs:
-        springbot.springs.remove(spring)
+    # Remove unconnected elements
+    springbot.removeUnconnected()
 
     return springbot
 

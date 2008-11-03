@@ -7,11 +7,11 @@ at a computer in a network
 # We need to load and store xml springbots files
 from springbots.springbot import store_xml, load_xml
 
+from springbots.networkspringbot import NetworkSpringbot
+from springbots.evolvespringbot import EvolveSpringbot
+
 # We need to generate some random names for the random ones
 from springbots.latimname import latimname
-
-# We need a springbot which can be marshaled, unmarshaled and evolve
-from springbots.networkevolvespringbot import NetworkEvolveSpringbot
 
 # To parse command lines
 import sys, optparse
@@ -49,6 +49,12 @@ serverslist = "fitness-servers.txt"
 #                                                                              #
 ################################################################################
 #                                                                              #
+
+class NetworkEvolveSpringbot(NetworkSpringbot, EvolveSpringbot):
+    """
+    This is a double heritage of a network and an evolvable
+    springbot into a class which does both
+    """
 
 def load_servers():
     """
@@ -125,7 +131,7 @@ class FitnessThread(Thread):
 
 def network_evolve(save_freq=100, limit=-1,
         verbose=False, discard_fraction=0.4, random_insert=0.1,
-        best=False, start_iteration = 0, prefix=''):
+        best=False, start_iteration = 1, prefix=''):
     """
     Given the initial population 'population', executes
     a genetic algorithm to evolve them for best fitness.
@@ -194,7 +200,7 @@ def network_evolve(save_freq=100, limit=-1,
                 print "Fitness average: %.4f" % (fitness_sum/float(len(population)))
 
             # Now Order population by its fitness
-            population.sort(reverse=True)
+            population.sort(cmp=lambda A,B: cmp(A['fitness'], B['fitness']), reverse=True)
 
             # Discards some of the worse half
             for specimen in sample(population[len(population)/2:], discarded + randoms):
@@ -284,8 +290,8 @@ if __name__ == "__main__":
     parser.add_option("-n", "--serverslist", dest="serverslist", default='fitness-servers.txt',
                       help="File which contains the url of the servers providing fitness service, defaults to fitness-servers.txt",
                       metavar="FILENAME")
-    parser.add_option("-a", "--start-at", dest="start_at", default=0,
-                      help="Start couting from iteration(default is zero)", metavar="ITERATION")
+    parser.add_option("-a", "--start-at", dest="start_at", default=1,
+                      help="Start couting from iteration(default is one)", metavar="ITERATION")
     parser.add_option("-P", "--prefix", dest="prefix", default=None,
                       help="Append a prefix to population file names saved, default is a random name", metavar="PREFIX")
     (options, args) = parser.parse_args()

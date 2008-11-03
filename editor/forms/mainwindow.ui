@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>878</width>
+    <width>1084</width>
     <height>605</height>
    </rect>
   </property>
@@ -30,7 +30,7 @@
     <rect>
      <x>0</x>
      <y>81</y>
-     <width>878</width>
+     <width>1084</width>
      <height>500</height>
     </rect>
    </property>
@@ -202,7 +202,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>878</width>
+     <width>1084</width>
      <height>24</height>
     </rect>
    </property>
@@ -247,7 +247,7 @@
     <rect>
      <x>0</x>
      <y>581</y>
-     <width>878</width>
+     <width>1084</width>
      <height>24</height>
     </rect>
    </property>
@@ -257,7 +257,7 @@
     <rect>
      <x>0</x>
      <y>24</y>
-     <width>878</width>
+     <width>1084</width>
      <height>57</height>
     </rect>
    </property>
@@ -281,6 +281,7 @@
    <addaction name="changeNameAct" />
    <addaction name="mutateAct" />
    <addaction name="newRandomAct" />
+   <addaction name="crossoverAct" />
   </widget>
   <action name="loadSpringbotsAct" >
    <property name="icon" >
@@ -406,6 +407,15 @@
    </property>
    <property name="text" >
     <string>New &amp;Random</string>
+   </property>
+  </action>
+  <action name="crossoverAct" >
+   <property name="icon" >
+    <iconset resource="../img/resource.qrc" >
+     <normaloff>:/acoes/crossover.png</normaloff>:/acoes/crossover.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Crossover</string>
    </property>
   </action>
  </widget>

@@ -5,8 +5,8 @@ network by translating(two ways) the object itself to a simpler
 structure based on dictionary and tuples.
 """
 
-from springbot import *
-from gear import *
+from springbot import Springbot
+from gear import Spring, Node
 import exceptions
 
 #
@@ -17,10 +17,6 @@ class NetworkSpringbot(Springbot):
     Extends evolvable springbot to add marshal and unmarshal methods to
     send more easily through network like xmlrpc
     """
-
-    def __init__(self, *args, **kargs):
-        Springbot.__init__(self, *args, **kargs)
-
 
     def marshal(self):
         """
