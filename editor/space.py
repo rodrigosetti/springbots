@@ -100,8 +100,8 @@ class Space(QtGui.QWidget):
                 cx, cy = selected_springbot.massCenter()
                 pen.setColor(QtGui.QColor(*selected_springbot.cor))
                 paint.setPen(pen)
-                paint.drawLine(cx-RADIUS, cy-RADIUS, cx+RADIUS, cy+RADIUS)
-                paint.drawLine(cx-RADIUS, cy+RADIUS, cx+RADIUS, cy-RADIUS)
+                paint.drawLine(cx-gear.RADIUS, cy-gear.RADIUS, cx+gear.RADIUS, cy+gear.RADIUS)
+                paint.drawLine(cx-gear.RADIUS, cy+gear.RADIUS, cx+gear.RADIUS, cy-gear.RADIUS)
 
             # Se esta habilitado mostrar nomes
             if mainwindow.show_names:
@@ -162,7 +162,7 @@ class Space(QtGui.QWidget):
                 else:
                     pen.setColor(QtGui.QColor(*springbot.cor))
                 paint.setPen(pen)
-                paint.drawEllipse(node.pos.x-RADIUS, node.pos.y-RADIUS, 2*RADIUS, 2*RADIUS)
+                paint.drawEllipse(node.pos.x-gear.RADIUS, node.pos.y-gear.RADIUS, 2*gear.RADIUS, 2*gear.RADIUS)
 
 #                               pen.setColor(QtGui.QColor(255, 255, 100))
 #                               paint.setPen(pen)
@@ -173,8 +173,8 @@ class Space(QtGui.QWidget):
         if self.creating and mainwindow.edit_mode:
             if not self.focus_node or (self.focus_node.parent is not self.selected_node.parent):
                 pen.setColor(QtGui.QColor(0, 255, 255))
-                paint.drawEllipse(self.mouse_pos[0]-RADIUS, self.mouse_pos[1]-RADIUS,
-                        2*RADIUS, 2*RADIUS)
+                paint.drawEllipse(self.mouse_pos[0]-gear.RADIUS, self.mouse_pos[1]-gear.RADIUS,
+                        2*gear.RADIUS, 2*gear.RADIUS)
 
             pen.setWidth(3)
             paint.setPen(pen)
@@ -266,7 +266,7 @@ class Space(QtGui.QWidget):
         # Verifica se algum node entra em foco
         for springbot in mainwindow.springbots:
             for node in springbot.nodes:
-                if dist((float(event.x()), float(event.y())), node.pos) <= RADIUS:
+                if dist((float(event.x()), float(event.y())), node.pos) <= gear.RADIUS:
                     self.focus_node = node
                     break
             else:
