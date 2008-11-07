@@ -1,21 +1,15 @@
+"""
+Springbot evolution extension.
+Implements genetic operations like mutation and crossover
+"""
+
 from springbot import Springbot
-from gear import *
-
-# Importa random para mutacao e geracao randomica de springbot
-import random
+from gear import Node, Spring
+from random import choice, uniform, randint
 from latimname import latimname
-
-# Importa rotinas matematicas
 from math import sqrt, pi
-
-# Vetor
 from vector import Vector
-
-import copy
-
-#
-# Globals
-#
+from copy import copy
 
 #: Keep track of the bloodline id being generated
 _bloodline_count = 0
@@ -23,9 +17,6 @@ _bloodline_count = 0
 #: Separator string between bloodline ids in Springbot's bloodline field
 BLOODLINE_SEP = ':'
 
-#
-# Springbot evoluivel
-#
 class EvolveSpringbot(Springbot):
     """
     Extends springbot to evolution methods
@@ -93,12 +84,12 @@ class EvolveSpringbot(Springbot):
             elif springB is None: springB = springA
 
             # Select spring
-            spring = random.choice([springA,springB])
+            spring = choice([springA,springB])
 
             # Select node A
             nodeA = breed.getNode(spring.a.id)
             if nodeA is None:
-                nodeA = random.choice([self,other]).getNode(spring.a.id)
+                nodeA = choice([self,other]).getNode(spring.a.id)
                 if nodeA is None: nodeA = spring.a
 
                 # Create node A
@@ -112,7 +103,7 @@ class EvolveSpringbot(Springbot):
             # Select node B
             nodeB = breed.getNode(spring.b.id)
             if nodeB is None:
-                nodeB = random.choice([self,other]).getNode(spring.b.id)
+                nodeB = choice([self,other]).getNode(spring.b.id)
                 if nodeB is None: nodeB = spring.b
 
                 # Create node B
@@ -151,25 +142,25 @@ class EvolveSpringbot(Springbot):
             return
 
         # Sorteia
-        tipo = random.choice(range(6))
+        tipo = choice(range(6))
 
         if tipo == 0: # 0 - Adicao de node
-            neigh = random.choice(self.nodes)
-            newnode = Node(pos=(neigh.pos.x + random.uniform(-newnodedist, newnodedist),
-                            neigh.pos.y + random.uniform(-newnodedist, newnodedist)))
+            neigh = choice(self.nodes)
+            newnode = Node(pos=(neigh.pos.x + uniform(-newnodedist, newnodedist),
+                            neigh.pos.y + uniform(-newnodedist, newnodedist)))
 
             self.add(newnode)       # Adiciona novo node
-            self.add(Spring(neigh, newnode, offset=random.uniform(0,pi*2))) # Adiciona nova spring
+            self.add(Spring(neigh, newnode, offset=uniform(0,pi*2))) # Adiciona nova spring
 
         elif tipo == 1 and len(self.nodes) > 1: # 1 - Remocao de node(se N > 1 e permanece conexo)
 
             # Cria uma copia do springbot
             copia = Springbot()
-            copia.nodes = copy.copy(self.nodes)
-            copia.springs = copy.copy(self.springs)
+            copia.nodes = copy(self.nodes)
+            copia.springs = copy(self.springs)
 
             # Escolhe um node para remover
-            toremove = random.choice(copia.nodes)
+            toremove = choice(copia.nodes)
 
             # Testa remocao na copia
             copia.remove(toremove)
@@ -181,18 +172,18 @@ class EvolveSpringbot(Springbot):
                         break
 
         elif tipo == 2 and len(self.nodes) > 1: # 2 - Adicao de spring(se nao eh totalmente conexo)
-            a = random.choice(self.nodes)
-            b = random.choice(self.nodes)
+            a = choice(self.nodes)
+            b = choice(self.nodes)
 
             # Verifica se nao eh o mesmo
             while a is b:
-                b = random.choice(self.nodes)
+                b = choice(self.nodes)
 
-            self.add(Spring(a, b, offset=random.uniform(0,pi*2)))   # Adiciona nova spring
+            self.add(Spring(a, b, offset=uniform(0,pi*2)))   # Adiciona nova spring
         elif tipo == 3 and len(self.springs) > 0: # 3 - Remocao de spring(se permanece conexo)
 
             # Escolhe spring
-            toremove = random.choice(self.springs)
+            toremove = choice(self.springs)
 
             # Remove
             self.remove(toremove)
@@ -201,17 +192,17 @@ class EvolveSpringbot(Springbot):
                 self.add(toremove)
 
         elif tipo == 4 and len(self.springs) > 0: # 4 - altera propriedades do spring
-            spring = random.choice(self.springs)
-            if random.choice([1, 2]) == 1:
-                spring.offset = max(spring.offset + random.uniform(-pi, pi), 0)
+            spring = choice(self.springs)
+            if choice([1, 2]) == 1:
+                spring.offset = max(spring.offset + uniform(-pi, pi), 0)
             else:
-                added = random.uniform(-0.5, 0.5)
+                added = uniform(-0.5, 0.5)
                 spring.amplitude = spring.amplitude + added if abs(spring.amplitude + added) <= 0.5 else spring.amplitude
 
         elif tipo == 5: # 5 - muda posicao de node(e estica springs)
-            node = random.choice(self.nodes)
-            node.pos.x += random.uniform(-nodevariation,nodevariation)
-            node.pos.y += random.uniform(-nodevariation,nodevariation)
+            node = choice(self.nodes)
+            node.pos.x += uniform(-nodevariation,nodevariation)
+            node.pos.y += uniform(-nodevariation,nodevariation)
 
             # Corrige springs
             for spring in self.springs:
@@ -233,24 +224,24 @@ def random_springbot(nodes_num=10, springs_num=30, noderadius=100):
     springbot = EvolveSpringbot(name=latimname(5))
     springbot["adapted"] = "random"
 
-    for x in xrange(random.randint(nodes_num/2, nodes_num)):
+    for x in xrange(randint(nodes_num/2, nodes_num)):
         # Adiciona um node
-        newnode = Node(pos=(random.uniform(-noderadius, noderadius),
-                random.uniform(-noderadius, noderadius)))
+        newnode = Node(pos=(uniform(-noderadius, noderadius),
+                uniform(-noderadius, noderadius)))
         springbot.add(newnode)  # Adiciona novo node
 
     if len(springbot.nodes) > 1:
-        for x in xrange(random.randint(springs_num/2, springs_num)):
+        for x in xrange(randint(springs_num/2, springs_num)):
             # Adiciona uma spring aleatoria
-            a = random.choice(springbot.nodes)
-            b = random.choice(springbot.nodes)
+            a = choice(springbot.nodes)
+            b = choice(springbot.nodes)
 
             # Verifica se nao eh o mesmo
             while a is b:
-                b = random.choice(springbot.nodes)
+                b = choice(springbot.nodes)
 
             # Adiciona nova spring
-            springbot.add(Spring(a, b, offset=random.uniform(0,pi*2), amplitude=random.uniform(-0.5, 0.5)))
+            springbot.add(Spring(a, b, offset=uniform(0,pi*2), amplitude=uniform(-0.5, 0.5)))
 
     # Remove unconnected elements
     springbot.removeUnconnected()

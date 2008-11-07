@@ -10,7 +10,8 @@ swim: optimizes maximium difference of mass center before and after in a liquid 
 
 # We need vector and gear to calculate some stuff
 from vector import Vector
-from gear import *
+from math import sqrt
+import gear
 
 try:
     import pygame
@@ -52,7 +53,7 @@ def walk(springbot, width, height, enable_graphics=False, simulation_time=1000):
                     raise KeyboardInterrupt
 
         springbot.refresh()
-        springbot.colideWall(height, DOWN)
+        springbot.colideWall(height, gear.DOWN)
 
     # Selects its mass center now
     end_x, end_y = springbot.massCenter()
@@ -100,7 +101,7 @@ def jump(springbot, width, height, enable_graphics=False, simulation_time=500):
         max_y = max(max_y, cy)
 
         springbot.refresh()
-        springbot.colideWall(height, DOWN)
+        springbot.colideWall(height, gear.DOWN)
 
     # Returns the maximal height achieved
     return abs(max_y - min_y)
@@ -152,7 +153,7 @@ def equilibrium(springbot, width, height, enable_graphics=False, simulation_time
         height_av += y2-y1
 
         springbot.refresh()
-        springbot.colideWall(height, DOWN)
+        springbot.colideWall(height, gear.DOWN)
 
     # Returns the equilibrium ratio average
     return 0 if height_av/simulation_time < RADIUS else eq_ratio/simulation_time
@@ -199,7 +200,7 @@ def height(springbot, width, height, enable_graphics=False, simulation_time=400)
 
         # Refresgh springbot
         springbot.refresh()
-        springbot.colideWall(height, DOWN)
+        springbot.colideWall(height, gear.DOWN)
 
     # Returns the aspect ratio average
     return aspect_ratio/simulation_time
@@ -236,7 +237,7 @@ def swim(springbot, width, height, enable_graphics=False, simulation_time=1500):
                 (event.type == pygame.KEYDOWN and event.key == 27):
                     raise KeyboardInterrupt
 
-        springbot.refresh(grav=(0,0), visc=VISCOSITY)
+        springbot.refresh(grav=(0,0), visc=gear.VISCOSITY)
 
     # Selects its mass center now
     end_x, end_y = springbot.massCenter()

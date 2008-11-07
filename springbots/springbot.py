@@ -3,8 +3,8 @@ This modules implements the springbot, a creature builded with
 spring and nodes.
 """
 
-# Importa sys para escrever na saida padrao
 import sys
+from warnings import warn
 
 # Rotinas para manuseamento de XML
 import xml.dom.minidom
@@ -14,7 +14,7 @@ import exceptions
 # Importa as partes integrantes dos springbots
 from gear import *
 
-from math import sqrt, pi
+from math import sqrt, pi, fabs
 
 try:
     import pygame
@@ -70,7 +70,7 @@ class Springbot(object):
         """
         Gets an info inten like a dictionary
         """
-        return self._info[key]
+        return self._info[key] if key in self._info else ''
 
     def __setitem__(self, key, value):
     	"""
@@ -441,15 +441,16 @@ def isfloat(s):
 
 # ############################################################################ #
 
-def load_xml(file=sys.stdin, limit=None):
+def load_xml(arq=sys.stdin, limit=None):
     """
     Reads an xml into a set of springbots
     """
 
     try:
-        doc = xml.dom.minidom.parse(file)
+        doc = xml.dom.minidom.parse(arq)
     except ExpatError:
-        sys.stderr.write("springbot.loadXML: XML parse error\n")
+        warn("springbot.loadXML: XML parse error at file %s." %
+                (arq.name if type(arq) == file else str(arq)))
         return []
 
     # Lista de springbots
@@ -460,7 +461,8 @@ def load_xml(file=sys.stdin, limit=None):
             springbotsNode = cnode
             break
     else:
-        sys.stderr.write("springbot.load_xml: There is no springbots element\n")
+        warn("springbot.load_xml: There is no <springbots> XML element in file %s." %
+                (arq.name if type(arq) == file else str(arq)))
         return []
 
     for springbotNode in springbotsNode.childNodes:

@@ -18,12 +18,12 @@ COLORS = "bgrcmykw"
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(description="Plot statistic graph from Springbot evolution experiments outputs")
     parser.add_option("-l", "--lineages", dest="lineages", default="all",
-                      help="Lineages names to plot, separated by comma. @ means to plot the average(default), and '*' plots all lineages", 
-                      metavar="[-]<lineage> | all [, ([-]<lineage> | all)]*")
+                      help="Lineages names to plot, separated by comma. 'all' means to plot the all average(default)",
+                      metavar="([-]<lineage>(+<lineage>)* | all)(, [-]<lineage>(+<lineage>)*)*")
     parser.add_option("-g", "--graph", dest="graph", default="average",
-            help="Specify one of three types of graph: average(default), histogram or individual", 
+            help="Specify one of three types of graph: average(default), histogram or individual",
                       metavar="average | histogram | individual")
     parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true",
             help="Verbose mode")
@@ -60,15 +60,20 @@ if __name__ == "__main__":
 
     if options.verbose: print "reading log..."
 
+    if len(args) == 0:
+        readfile = sys.stdin
+    else:
+        readfile = open(args[0])
+
     # Read input log
-    for n, line in enumerate(sys.stdin):
+    for n, line in enumerate(readfile):
 
         # Strip leading spaces and lowercase
         line = string.lower(string.strip(line))
-    
+
         # Ignore comments and blank lines
         if line is '' or line.startswith('#'): continue
-        
+
         # Check for generation info
         m = re.match(r"^iteration\s(\d+):$", line)
         if m:
@@ -101,25 +106,26 @@ if __name__ == "__main__":
         # Check for fitness average info
         m = re.match(r"^fitness\saverage:\s(\d+\.\d+)$", line)
         if m:
-            data[-1]['fitness'] = float(m.group(1))            
+            data[-1]['fitness'] = float(m.group(1))
             continue
 
         # Check for individual info
         m = re.match(r"^(\d+)/(\d+):\s\"([a-z]+)[a-z\s]*\"\((\d+)\)\s(\d+\.\d+)$", line)
         if m:
             name = m.group(3)
-            if (graph == HISTOGRAM and 'all' in lineages) or name in lineages:
-                data[-1]['tests'].append({})
-                data[-1]['tests'][-1]['name'] = name
-                data[-1]['tests'][-1]['generation'] = int(m.group(4))
-                data[-1]['tests'][-1]['fitness'] = float(m.group(5))
-            
-            for non_name in non_lineages:
-                if name != non_name:
+            for lineage in lineages:
+                if name in lineage.split('+') or (lineage == 'all' and graph == HISTOGRAM):
                     data[-1]['tests'].append({})
-                    data[-1]['tests'][-1]['name'] = "non-" + non_name
+                    data[-1]['tests'][-1]['name'] = lineage
                     data[-1]['tests'][-1]['generation'] = int(m.group(4))
-                    data[-1]['tests'][-1]['fitness'] = float(m.group(5))                    
+                    data[-1]['tests'][-1]['fitness'] = float(m.group(5))
+
+            for non_lineage in non_lineages:
+                if name not in non_lineage.split('+'):
+                    data[-1]['tests'].append({})
+                    data[-1]['tests'][-1]['name'] = "non-" + non_lineage
+                    data[-1]['tests'][-1]['generation'] = int(m.group(4))
+                    data[-1]['tests'][-1]['fitness'] = float(m.group(5))
         else:
             sys.stderr.write("Warning: bad log data at line %d: %s(finishing processing)\n" % (n, line))
             break
@@ -134,9 +140,9 @@ if __name__ == "__main__":
     # Check graph style
     if graph == AVERAGE:
         if options.verbose: "processing graph: average fitness"
-         
+
         # Start averages data
-        averages = {}        
+        averages = {}
         if 'all' in lineages:
             averages['all'] = []
 
@@ -177,7 +183,7 @@ if __name__ == "__main__":
         for n, name in enumerate(averages):
             if len(averages[name]) > 0:
                 unique = len([x for x in averages[name] if x is not None]) == 1
-                pylab.plot(averages[name], COLORS[n % len(COLORS)] + ('^' if unique else '-'), 
+                pylab.plot(averages[name], COLORS[n % len(COLORS)] + ('^' if unique else '-'),
                            label=name, lw=2)
             else:
                 sys.stderr.write("Warning: %s have no data.\n" % name)
@@ -185,7 +191,7 @@ if __name__ == "__main__":
         if len(averages) == 1:
             pylab.title("Fitness average for " + averages.keys()[0])
         else:
-            pylab.title("Fitness average")            
+            pylab.title("Fitness average")
             pylab.legend()
 
     elif graph == INDIVIDUAL:
@@ -222,7 +228,7 @@ if __name__ == "__main__":
 
         for n, name in enumerate(individual):
             if len(individual[name][0]) > 0:
-                pylab.plot(individual[name][0], individual[name][1], 
+                pylab.plot(individual[name][0], individual[name][1],
                            COLORS[n % len(COLORS)] + ("o" if name != 'all' else '-'), label=name, lw=2)
             else:
                 sys.stderr.write("Warning: %s have no data.\n" % name)
@@ -269,7 +275,7 @@ if __name__ == "__main__":
         alpha = 1.0/len(histogram)
         for n, name in enumerate(histogram):
             if len(histogram[name]) > 0:
-                _, _, x = pylab.hist(histogram[name], 100, fc=COLORS[n % len(COLORS)], 
+                _, _, x = pylab.hist(histogram[name], 100, fc=COLORS[n % len(COLORS)],
                                      ec=COLORS[n % len(COLORS)], alpha=alpha, label=name)
             else:
                 sys.stderr.write("Warning: %s have no data.\n" % name)
@@ -282,7 +288,7 @@ if __name__ == "__main__":
             pylab.title("Fitness Histogram")
             pylab.legend(h,histogram.keys())
 
-    
+
     # Show plot
     if options.verbose: print "plotting"
     pylab.show()

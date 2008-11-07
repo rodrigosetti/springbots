@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 from springbots.springbot import load_xml
-from springbots.gear import *
+from springbots.gear import RADIUS
 import sys, optparse
 
 #
@@ -10,7 +10,7 @@ import sys, optparse
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(description="Create an SVG image from a Springbot XML genome population")
     parser.add_option("-n", "--number", dest="number", default=1,
             help="Number of springbots from file to draw", metavar="NUMBER")
     parser.add_option("-r", "--row", dest="row", default=10,

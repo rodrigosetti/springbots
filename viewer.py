@@ -13,7 +13,7 @@ WIDTH, HEIGHT = 640, 480
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(description="Shows a Springbot genome within a XML population")
     parser.add_option("-i", "--index", dest="index", default=0,
             help="Springbot index in population file", metavar="INDEX")
     parser.add_option("-l", "--liquid", dest="liquid", default=False,

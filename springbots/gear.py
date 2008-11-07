@@ -4,10 +4,7 @@ and springs. Here are implemented all the physics behaviour and interations
 among those parts.
 """
 
-# Get all math we need
-from math import *
-
-# Get vector
+from math import sqrt, pi, sin, log
 from vector import Vector
 
 #

@@ -42,6 +42,8 @@ optimizing for the desired fitness.
 			time on it adapted environment, optionally includes some randoms too. This program was
 			designed for demonstration purpouses.
 
+* log-plot.py   - Plots a statistic graph from evolution experiments output based on very flexible parameters.
+
 
 == Examples ==
 

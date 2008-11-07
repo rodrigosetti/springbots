@@ -4,6 +4,8 @@ Evolves springbots for specific tasks over the network: each springbot is simula
 at a computer in a network
 """
 
+from warnings import warn
+
 # We need to load and store xml springbots files
 from springbots.springbot import store_xml, load_xml
 
@@ -92,12 +94,7 @@ class FitnessThread(Thread):
         while True:
             try:
                 # Get the less used server at the moment
-                i = 0
-                while servers and i not in servers_lock:
-                    i += 1
-                if not servers:
-                    break
-                server_index = servers_lock.index(i)
+                server_index = min(xrange(len(servers_lock)), key=servers_lock.__getitem__)
 
                 # Get the server object
                 server = servers[server_index]
@@ -106,8 +103,8 @@ class FitnessThread(Thread):
                 servers_lock[server_index] += 1
 
                 # Calls the fitness function at the server
-                marshal_springbot = \
-                server.fitness_test(springbot.marshal(), fitness_function)
+                marshal_springbot = server.fitness_test(
+                    springbot.marshal(), fitness_function)
 
                 # Unlock
                 servers_lock[server_index] -= 1
@@ -117,12 +114,12 @@ class FitnessThread(Thread):
 
                 break
             except socket.error:
-                sys.stderr.write("Connection refused at server %s\n" % (str(server)))
+                warn("Connection refused at server %s\n" % (str(server)))
             except xmlrpclib.Error, err:
-                sys.stderr.write("Error at server %s: %s\n" % (str(server), str(err)))
+                warn("Error at server %s: %s\n" % (str(server), str(err)))
 
         if not servers:
-            sys.stderr.write("There are no servers left to use. Doing local fitness test\n")
+            warn("There are no servers left to use. Doing local fitness test\n")
             fitness.__dict__[fitness_function](springbot, WIDTH, HEIGHT)
 
 #                                                                              #
@@ -145,7 +142,7 @@ def network_evolve(save_freq=100, limit=-1,
     elif discard_fraction + random_insert > 1:
         raise ValueError("the sum of discard_fraction and random_insert must not be greater than 1")
 
-    iter = start_iteration # Initial iteration
+    iteration = start_iteration # Initial iteration
 
     # Calculate amount of discarded and random population
     discarded = int(len(population)/2 * discard_fraction)
@@ -154,10 +151,10 @@ def network_evolve(save_freq=100, limit=-1,
     if verbose:
         print "# Initiating simulation with a population of %d specimens..." % (len(population))
         print "# Evolving for %s:" % (fitness_function)
-        print "# At each iteration %d will be discarded, %d of the remaining will" %\
-        (discarded, discarded-randoms),
-        print " be selected cloned and mutated and %d random springbots will be inserted" %\
-        (randoms)
+        print "# At each iteration %d will be discarded, %d of the remaining will" % (
+            discarded, discarded-randoms),
+        print " be selected cloned and mutated and %d random springbots will be inserted" % (
+            randoms)
 
     # Turn all population into NetworkEvolveSpringbot
     population = [NetworkEvolveSpringbot(springbot) for springbot in population]
@@ -166,13 +163,13 @@ def network_evolve(save_freq=100, limit=-1,
 
     try:
 
-        while population and iter != limit:
+        while population and iteration != limit:
 
             # (Re)load servers from file
             load_servers()
 
             if verbose:
-                print "Iteration %d:" % (iter)
+                print "Iteration %d:" % (iteration)
                 fitness_sum = 0
                 bloodline_len_sum = 0
 
@@ -200,7 +197,8 @@ def network_evolve(save_freq=100, limit=-1,
                 print "Fitness average: %.4f" % (fitness_sum/float(len(population)))
 
             # Now Order population by its fitness
-            population.sort(cmp=lambda A,B: cmp(A['fitness'], B['fitness']), reverse=True)
+            population.sort(
+                cmp=lambda A,B: cmp(A['fitness'], B['fitness']), reverse=True)
 
             # Discards some of the worse half
             for specimen in sample(population[len(population)/2:], discarded + randoms):
@@ -216,9 +214,9 @@ def network_evolve(save_freq=100, limit=-1,
                 if len(names) == 1:
                     child['name'] = names[0] + " " + latimname(2)
                 elif len(names) == 2:
-                    child['name'] = names[0] + " " + names[1] + " " + latimname(2)
+                    child['name'] = " ".join([names[0], names[1], latimname(2)])
                 elif len(names) == 3:
-                    child['name'] = names[0] + " " + names[2] + " " + latimname(2)
+                    child['name'] = " ".join([names[0], names[2], latimname(2)])
 
                 # Incorporate children into the population
                 population.append(child)
@@ -227,13 +225,13 @@ def network_evolve(save_freq=100, limit=-1,
             population += [NetworkEvolveSpringbot(random=True) for x in xrange(randoms)]
 
             # Test if it is time to save population
-            if iter % save_freq == 0:
+            if iteration % save_freq == 0:
                 # Saves the current population
-                filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iter)
+                filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iteration)
                 store_xml(population, filename)
 
                 if verbose:
-                    print "# iteration %d saved into %s" % (iter, filename)
+                    print "# iteration %d saved into %s" % (iteration, filename)
 
             # Saves best if asked
             if best:
@@ -241,10 +239,10 @@ def network_evolve(save_freq=100, limit=-1,
                 store_xml(population[:1], filename)
 
                 if verbose:
-                    print "# Best of iteration %d saved into %s" % (iter, filename)
+                    print "# Best of iteration %d saved into %s" % (iteration, filename)
 
             # Increments iteration
-            iter += 1
+            iteration += 1
 
     except KeyboardInterrupt:
         pass
@@ -259,11 +257,11 @@ def network_evolve(save_freq=100, limit=-1,
     population.sort(reverse=True)
 
     # Now, saves the current population and quit
-    filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iter)
+    filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iteration)
     store_xml(population, filename)
     if verbose:
         print
-        print "# iteration %d saved into %s" % (iter, filename)
+        print "# iteration %d saved into %s" % (iteration, filename)
         print "# terminating..."
 
 #
@@ -272,10 +270,7 @@ def network_evolve(save_freq=100, limit=-1,
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
-    parser.add_option("-p", "--population", dest="arquivo", default=None,
-                      help="Initial population XML file, default reads from stdin",
-                      metavar="FILENAME")
+    parser = optparse.OptionParser(description="Starts a Springbots network distributed evolution experiment.")
     parser.add_option("-v", "--verbose", dest="verbose", default=False,
                       help="Verbose output", action="store_true")
     parser.add_option("-b", "--best", dest="best", default=False,
@@ -307,8 +302,13 @@ if __name__ == "__main__":
     options.prefix = options.prefix if options.prefix is not None else lower(latimname(3))
     if options.verbose: print "# %s experiment." % options.prefix
 
+    if len(args) == 0:
+        readfile = sys.stdin
+    else:
+        readfile = args[0]
+
     # Reads the initial population
-    population = load_xml(options.arquivo if options.arquivo else sys.stdin)
+    population = load_xml(readfile)
 
     # Starts the simulation
     network_evolve(

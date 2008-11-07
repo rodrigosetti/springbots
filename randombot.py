@@ -8,7 +8,7 @@ import optparse
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(description="Generate a random Springbots XML genome population")
     parser.add_option("-p", "--population", dest="population", default=1,
             help="Number of random springbots to create", metavar="NUMBER")
     parser.add_option("-n", "--nodes", dest="nodes_num", default=10,

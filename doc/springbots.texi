@@ -105,10 +105,10 @@ Este é um exemplo de um arquivo XML descrevendo apenas um genoma:
 @verbatim
 
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE springbots SYSTEM 
+<!DOCTYPE springbots SYSTEM
           "http://springbots.sourceforge.net/springbots.dtd">
 <springbots>
-    <springbot angle="0" name="Swarm-A Abem Ufo" generation="7" 
+    <springbot angle="0" name="Swarm-A Abem Ufo" generation="7"
      adapted="swim" bloodline="0:b:8:1:2:5:0">
       <node pos="-225,8" id="S0N1" />
       <node pos="-175,18" id="S0N2" />
@@ -143,7 +143,7 @@ Este é um exemplo de um arquivo XML descrevendo apenas um genoma:
 @end verbatim
 @end example
 
-O descritor DTD oficial pode ser encontrado em 
+O descritor DTD oficial pode ser encontrado em
 @uref{springbots.sourceforge.net/springbots.dtd}.
 
 É importante discriminar os atributos do elemento ``springbot'':
@@ -530,8 +530,9 @@ Todos estes dados podem alimentar o programa @file{log-plot.py} que gera gráfic
 @item -v ou --verbose
       Escreve algumas informações na saída padrão sobre o processo de geração do gráfico.
 @item -l <lista> ou --lineages=<lista>
-      Especifica uma lista de linhagens separadas por vírgula para criar o gráfico. Podem ser nomes de linhagens, @samp{all}, para a média geral ou então @samp{-<linhagem>}(nome da linhagem precedido por um sinal de menos) que processa os dados
-de todos com exceção desta linhagem.
+      Especifica uma lista de linhagens separadas por vírgula para criar o gráfico. Podem ser nomes de linhagens, @samp{all}, para a média geral ou então @samp{-<linhagem>}(nome da linhagem precedido por um sinal de menos) que processa os dados de todos com exceção desta linhagem. As linhagens adicionalmente podem ser combinadas com
+      @samp{"+"}, como em @samp{<linhagem1>+<linhagem2>} aonde um único grupo de dados será processado para as duas
+      linhagens.
 @item -g <tipo> ou --graph=<tipo>
       Especifica o tipo de gráfico, podendo ter três valores: @samp{averages}(média de @emph{fitness}), @samp{individual}(@emph{fitness} individuais) ou @samp{histogram}(histograma de @emph{fitness}).
 @item
@@ -548,33 +549,33 @@ Todos os exemplos gráficos a seguir usam o mesmo conjunto de dados de um experi
 @command{$ ./log-plot.py -g av -l all,oqoira < abc-walk-p100.log}
 Média de @emph{fitness} geral comparada com a
 média da linhagem Oqoira: A média geral acompanha
-o crescimento da linhagem dominante mas se mantém 
+o crescimento da linhagem dominante mas se mantém
 sempre abaixo, devido às infusões randômicas.
 @end example
 
 @example
 @center @image{img/walk-100-hist-non_oqoira-oqoira,140mm,,,}
 @command{$ ./log-plot.py -g hist -l oqoira,-oqoira < abc-walk-p100.log}
-Histograma de @emph{fitness} comparando a linhagem Oqoira 
-com todas as não-Oqoiras: A linhagem dominante, também de 
-população dominante, está concentrada em torno do @emph{fitness} 
-900, existe uma distribuição uniforme nesse meio devido às 
+Histograma de @emph{fitness} comparando a linhagem Oqoira
+com todas as não-Oqoiras: A linhagem dominante, também de
+população dominante, está concentrada em torno do @emph{fitness}
+900, existe uma distribuição uniforme nesse meio devido às
 mutações deletérias. O  restante da população não-Oqoira
-concentra-se principalmente em @emph{fitness} zero(infusões 
-randômicas) e um pouco em torno de 600(linhagens que competiram 
+concentra-se principalmente em @emph{fitness} zero(infusões
+randômicas) e um pouco em torno de 600(linhagens que competiram
 mas foram extintas).
 @end example
 
 @example
 @center @image{img/walk-100-ind-all-non_oqoira-oqoira,140mm,,,}
 @command{$ ./log-plot.py -g ind -l all,oqoira,-oqoira < abc-walk-p100.log}
-@emph{Fitness} individual comparando a média geral, a linhagem 
-Oqoira e os não-Oqoira: Observa-se a concentração da linhagem 
-principal em uma linha evolutiva logaritmóide, os não-Oqoira 
-evolutiram até se extinguirem em torno da iteração 50, o restante, 
-são infusões randômicas concentrados no @emph{fitness} zero, nota-se 
-que é muito improvável que um espécime aleatório venha a competir 
-com a linhagem dominante, que já se encontra bem evoluída após 
+@emph{Fitness} individual comparando a média geral, a linhagem
+Oqoira e os não-Oqoira: Observa-se a concentração da linhagem
+principal em uma linha evolutiva logaritmóide, os não-Oqoira
+evolutiram até se extinguirem em torno da iteração 50, o restante,
+são infusões randômicas concentrados no @emph{fitness} zero, nota-se
+que é muito improvável que um espécime aleatório venha a competir
+com a linhagem dominante, que já se encontra bem evoluída após
 monopolizar o experimento.
 @end example
 

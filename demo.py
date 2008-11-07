@@ -14,7 +14,7 @@ WIDTH, HEIGHT = 640,400
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(description="Show all genomes from a Springbot XML population")
     parser.add_option("-f", "--fullscreen", dest="fullscreen", default=False,
             action="store_true", help="Show in fullscreen")
     parser.add_option("-s", "--sound", dest="sound", default=False,

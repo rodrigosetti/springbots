@@ -115,7 +115,9 @@ def fitness_test(marshal_springbot, function="walk"):
 if __name__ == "__main__":
 
     # Parses command line
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(
+        description="Starts a Springbot fitness server to be remotely accessed by " \
+                    "network distributed evolution experiments")
 
     if HAS_PYGAME:
         parser.add_option("-g", "--graphics", dest="graphics", default=False,
