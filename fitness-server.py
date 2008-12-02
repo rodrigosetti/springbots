@@ -9,8 +9,8 @@ import sys, optparse
 # Get all fitness functions we need
 from springbots import fitness
 
-# Springbot object which can be unmarshaled and evolved
-from springbots.networkevolvespringbot import NetworkEvolveSpringbot
+# Springbot object which can be unmarshaled
+from springbots.networkspringbot import NetworkSpringbot
 
 # This is used to create the xmlrpc server
 import SimpleXMLRPCServer
@@ -96,7 +96,7 @@ def fitness_test(marshal_springbot, function="walk"):
     """
     global SHOW_GRAPHICS, VERBOSE_MODE
 
-    springbot = NetworkEvolveSpringbot().unmarshal(marshal_springbot)
+    springbot = NetworkSpringbot().unmarshal(marshal_springbot)
 
     # Tests fitness
     springbot['fitness'] = fitness.__dict__[function](springbot, WIDTH, HEIGHT, SHOW_GRAPHICS)
