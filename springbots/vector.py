@@ -10,7 +10,7 @@ def _is_numeric(obj):
     """
     Finds out if a variable is a numeric one
     """
-    if isinstance(obj, (int, long, float)):
+    if isinstance(obj, (int, float)):
         return True
     else:
         return False
@@ -53,13 +53,16 @@ class Vector(object):
         try:
             other = other - 0
         except:
-            raise TypeError, "Only scalar multiplication is supported."
+            raise TypeError("Only scalar multiplication is supported.")
         return Vector( other * self.x, other * self.y )
 
     def __rmul__(self, other):
         return self.__mul__(other)
 
     def __div__(self, other):
+        return Vector( self.x // other, self.y // other )
+
+    def __truediv__(self, other):
         return Vector( self.x / other, self.y / other )
 
     def __neg__(self):

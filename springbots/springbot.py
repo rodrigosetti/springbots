@@ -9,10 +9,10 @@ from warnings import warn
 # Rotinas para manuseamento de XML
 import xml.dom.minidom
 from xml.parsers.expat import ExpatError
-import exceptions
+# import exceptions
 
 # Importa as partes integrantes dos springbots
-from gear import *
+from .gear import *
 
 from math import sqrt, pi, fabs
 
@@ -73,7 +73,7 @@ class Springbot(object):
         return self._info[key] if key in self._info else ''
 
     def __setitem__(self, key, value):
-    	"""
+        """
         Gets an info inten like a dictionary
         """
         self._info[key] = value
@@ -285,7 +285,7 @@ class Springbot(object):
         x1, y1, x2, y2 = self.boundingBox()
 
         # Calculates horizontal center offset
-        cx = - ((x2+x1)/2)
+        cx = - ((x2+x1)//2)
 
         # Moves springbot to touch the ground under it
         # and moves sprinng bot to width center
@@ -311,17 +311,17 @@ class Springbot(object):
         # Gets the position center
         x1, y1, x2, y2 = self.boundingBox()
 
-        zm = min(min(width/((x2-x1)+50.0), height/((y2-y1)+50.0)), 1.0)
+        zm = min(min(width//((x2-x1)+50.0), height//((y2-y1)+50.0)), 1.0)
 
         if track_x:
-            cxp = (x2+x1)/2
-            cx = cxp*zm - (width/2)
+            cxp = (x2+x1)//2
+            cx = cxp*zm - (width//2)
         else:
-            cxp = cx = -width/2
+            cxp = cx = -width//2
 
         if track_y:
-            cyp = (y2+y1)/2
-            cy = cyp*zm - (height/2)
+            cyp = (y2+y1)//2
+            cy = cyp*zm - (height//2)
         else:
             cyp = cy = 0
 
@@ -333,12 +333,12 @@ class Springbot(object):
         # limpa tela
         screen.fill((0,0,0))
 
-        siz_x, siz_y = width/10, height/10
-        for x in xrange(0,width+100,siz_x):
-            for y in xrange(0,height+100,siz_y):
+        siz_x, siz_y = width//10, height//10
+        for x in range(0,width+100,siz_x):
+            for y in range(0,height+100,siz_y):
                 pygame.draw.rect(screen, backgroundcolor,
-                                 (((x - cxp) % (width+siz_x) - siz_x, (y - cyp) % (height+siz_y) - siz_y),
-                                  (siz_x-10,siz_y-10)))
+                                 (int(x - cxp) % (width+siz_x) - siz_x, int(y - cyp) % (height+siz_y) - siz_y,
+                                  siz_x-10,siz_y-10))
 
         # Desenha springs
         for spring in self.springs:
@@ -346,9 +346,9 @@ class Springbot(object):
             fator = (length - spring.normal)/length if length > 0 else 0
 
             if fator <= 0:
-                color = (255, 255-min(-fator * 255, 255), 255-min(-fator * 255, 255))
+                color = (255, 255-min(int(-fator * 255), 255), 255-min(int(-fator * 255), 255))
             elif fator > 0:
-                color = (255-min(fator * 255, 255), 255, 255-min(fator * 255, 255))
+                color = (255-min(int(fator * 255), 255), 255, 255-min(int(fator * 255), 255))
 
             pygame.draw.line(screen, color, (spring.a.pos.x*zm - cx, spring.a.pos.y*zm - cy),
                     (spring.b.pos.x*zm - cx, spring.b.pos.y*zm - cy), int(3*zm))
@@ -363,8 +363,8 @@ class Springbot(object):
             pygame.draw.circle(screen, (10,255,255), (int(node.pos.x*zm - cx), int(node.pos.y*zm - cy)),
                                int(RADIUS*zm), int(2*zm))
 
-        velx /= len(self.nodes)
-        vely /= len(self.nodes)
+        velx //= len(self.nodes)
+        vely //= len(self.nodes)
 
         if showText:
             # Render springbot's name and info
@@ -397,11 +397,11 @@ def store_xml(springbots, outfile=sys.stdout):
 
     for n, springbot in enumerate(springbots):
         x1, y1, x2, y2 = springbot.boundingBox()
-        cx, cy = (x1+x2)/2, (y1+y1)/2
+        cx, cy = (x1+x2)//2, (y1+y1)//2
 
         outfile.write('\t<springbot ')
 
-        for key, value in springbot._info.iteritems():
+        for key, value in springbot._info.items():
             outfile.write('%s="%s" ' % (key, str(value)))
 
         outfile.write('>\n')
@@ -450,7 +450,7 @@ def load_xml(arq=sys.stdin, limit=None):
         doc = xml.dom.minidom.parse(arq)
     except ExpatError:
         warn("springbot.loadXML: XML parse error at file %s." %
-                (arq.name if type(arq) == file else str(arq)))
+                (arq.name if type(arq) == type(sys.stdin) else str(arq)))
         return []
 
     # Lista de springbots
@@ -471,7 +471,7 @@ def load_xml(arq=sys.stdin, limit=None):
             # Cria novo springbot
             newspringbot = Springbot()
 
-            for key, value in springbotNode.attributes.items():
+            for key, value in list(springbotNode.attributes.items()):
                 newspringbot[key] = float(value) if isfloat(value) else \
                 (int(value) if value.isdigit() else value)
 

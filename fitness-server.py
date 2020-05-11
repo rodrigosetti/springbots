@@ -13,7 +13,7 @@ from springbots import fitness
 from springbots.networkspringbot import NetworkSpringbot
 
 # This is used to create the xmlrpc server
-import SimpleXMLRPCServer
+import xmlrpc.server
 
 try:
     import pygame
@@ -49,7 +49,7 @@ def quit():
         pygame.quit()
 
     if VERBOSE_MODE:
-        print "closing server..."
+        print("closing server...")
     server.server_close()
 
     return 0
@@ -83,7 +83,7 @@ def draw_waiting(msg):
     font = pygame.font.Font(None, 45)
     text = font.render(msg, True, (255,255,255))
     tw, th = text.get_size()
-    screen.blit(text, ((width/2)-(tw/2), (height/2)-(th/2)))
+    screen.blit(text, ((width//2)-(tw//2), (height//2)-(th//2)))
 
     pygame.display.flip()   # Show display
 
@@ -105,7 +105,7 @@ def fitness_test(marshal_springbot, function="walk"):
         draw_waiting("FITNESS: %.3f." % (springbot['fitness']))
 
     if VERBOSE_MODE:
-        print '"%s": %.3f' % (springbot['name'], springbot['fitness'])
+        print('"%s": %.3f' % (springbot['name'], springbot['fitness']))
 
     return springbot.marshal()
 
@@ -150,13 +150,13 @@ if __name__ == "__main__":
 
     # Create server
     try:
-        server = SimpleXMLRPCServer.SimpleXMLRPCServer(('', options.port))
-    except socket.error, err:
-        print err
+        server = xmlrpc.server.SimpleXMLRPCServer(('', options.port))
+    except socket.error as err:
+        print(err)
         sys.exit(1)
 
     if options.verbose:
-        print "Server listening on port %d" % (options.port)
+        print("Server listening on port %d" % (options.port))
 
     # Register functions
     server.register_function(fitness_test)

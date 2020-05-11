@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtWidgets, QtCore
 from springbots.evolvespringbot import *
 from springbots import gear
 from springbots.springbot import Springbot
@@ -32,13 +32,13 @@ CORES = [
 def dist(a, b):
     return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2)
 
-class Space(QtGui.QWidget):
+class Space(QtWidgets.QWidget):
 
     #
     # Inicializa widget
     #
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setMouseTracking(True)
         self.setAutoFillBackground(False)
 
@@ -93,7 +93,7 @@ class Space(QtGui.QWidget):
 
             pen.setColor(QtGui.QColor(40, 40, 40))
             paint.setPen(pen)
-            paint.drawRoundRect(x1, y1, x2-x1, y2-y1)
+            paint.drawRoundedRect(x1, y1, x2-x1, y2-y1, 25.0, 25.0)
 
             # Se esta habilitado centro de massa
             if mainwindow.show_mass_center:
@@ -132,9 +132,9 @@ class Space(QtGui.QWidget):
                     fator = (length - spring.normal)/(length or 1)
 
                     if fator <= 0:
-                        color = (255, 255-min(-fator * 255, 255), 255-min(-fator * 255, 255))
+                        color = (255, 255-min(int(-fator * 255), 255), 255-min(int(-fator * 255), 255))
                     elif fator > 0:
-                        color = (255-min(fator * 255, 255), 255, 255-min(fator * 255, 255))
+                        color = (255-min(int(fator * 255), 255), 255, 255-min(int(fator * 255), 255))
 
                     pen.setColor(QtGui.QColor(*color))
 

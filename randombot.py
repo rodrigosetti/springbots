@@ -29,4 +29,4 @@ if __name__ == "__main__":
     # writes it to XML output
     store_xml(\
             [random_springbot(options.nodes_num, options.springs_num, options.node_radius) \
-            for x in xrange(options.population)])
+            for x in range(options.population)])

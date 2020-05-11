@@ -58,7 +58,7 @@ if __name__ == "__main__":
     iter = None
     data = []
 
-    if options.verbose: print "reading log..."
+    if options.verbose: print("reading log...")
 
     if len(args) == 0:
         readfile = sys.stdin
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 sys.stderr.write("Error: bad log data at line %d: %s(broke iteration sequence)\n" % (d, line))
                 sys.exit(1)
 
-            if options.verbose: print "iteration %d" % new_iter
+            if options.verbose: print("iteration %d" % new_iter)
 
             iter = new_iter
             data.append({})
@@ -189,13 +189,13 @@ if __name__ == "__main__":
                 sys.stderr.write("Warning: %s have no data.\n" % name)
 
         if len(averages) == 1:
-            pylab.title("Fitness average for " + averages.keys()[0])
+            pylab.title("Fitness average for " + list(averages.keys())[0])
         else:
             pylab.title("Fitness average")
             pylab.legend()
 
     elif graph == INDIVIDUAL:
-        if options.verbose: print "processing data: individual fitness"
+        if options.verbose: print("processing data: individual fitness")
 
         # Start individual data
         individual = {}
@@ -220,7 +220,7 @@ if __name__ == "__main__":
                 else:
                     individual[test['name']] = ([n], [test['fitness']])
 
-        if options.verbose: print "processing plot"
+        if options.verbose: print("processing plot")
 
         # Plot graphs
         pylab.xlabel("iterations")
@@ -234,13 +234,13 @@ if __name__ == "__main__":
                 sys.stderr.write("Warning: %s have no data.\n" % name)
 
         if len(individual) == 1:
-            pylab.title("Fitness tests for " + individual.keys()[0])
+            pylab.title("Fitness tests for " + list(individual.keys())[0])
         else:
             pylab.title("Fitness tests")
             pylab.legend()
 
     elif graph == HISTOGRAM:
-        if options.verbose: print "processing graph: fitness histogram"
+        if options.verbose: print("processing graph: fitness histogram")
 
         # Start histogram data
         histogram = {}
@@ -265,7 +265,7 @@ if __name__ == "__main__":
                         histogram[test['name']] = [test['fitness']]
 
 
-        if options.verbose: print "processing plot"
+        if options.verbose: print("processing plot")
 
         # Plot
         pylab.xlabel("fitness")
@@ -283,12 +283,12 @@ if __name__ == "__main__":
             h.append(x[0])
 
         if len(histogram) == 1:
-            pylab.title("Fitness Histogram for " + histogram.keys()[0])
+            pylab.title("Fitness Histogram for " + list(histogram.keys())[0])
         else:
             pylab.title("Fitness Histogram")
-            pylab.legend(h,histogram.keys())
+            pylab.legend(h,list(histogram.keys()))
 
 
     # Show plot
-    if options.verbose: print "plotting"
+    if options.verbose: print("plotting")
     pylab.show()

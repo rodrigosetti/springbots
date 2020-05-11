@@ -9,9 +9,9 @@ swim: optimizes maximium difference of mass center before and after in a liquid 
 """
 
 # We need vector and gear to calculate some stuff
-from vector import Vector
+from .vector import Vector
 from math import sqrt
-import gear
+from . import gear
 
 try:
     import pygame
@@ -41,7 +41,7 @@ def walk(springbot, width, height, enable_graphics=False, simulation_time=1000):
         screen = pygame.display.get_surface()
 
     # Starts the simulation
-    for i in xrange(simulation_time):
+    for i in range(simulation_time):
         if enable_graphics and HAS_PYGAME:
             springbot.draw(screen, ticks, track_x=True, extrainfo="evolving for walk")
             pygame.display.flip()   # Show display
@@ -84,7 +84,7 @@ def jump(springbot, width, height, enable_graphics=False, simulation_time=500):
         screen = pygame.display.get_surface()
 
     # Starts the simulation
-    for i in xrange(simulation_time):
+    for i in range(simulation_time):
         if enable_graphics and HAS_PYGAME:
             springbot.draw(screen, ticks, extrainfo="evolving for jump")
             pygame.display.flip()   # Show display
@@ -131,7 +131,7 @@ def equilibrium(springbot, width, height, enable_graphics=False, simulation_time
         screen = pygame.display.get_surface()
 
     # Starts the simulation
-    for i in xrange(simulation_time):
+    for i in range(simulation_time):
         if enable_graphics and HAS_PYGAME:
             springbot.draw(screen, ticks, extrainfo="evolving for equilibrium")
             pygame.display.flip()   # Show display
@@ -180,7 +180,7 @@ def height(springbot, width, height, enable_graphics=False, simulation_time=400)
         screen = pygame.display.get_surface()
 
     # Starts the simulation
-    for i in xrange(simulation_time):
+    for i in range(simulation_time):
         if enable_graphics and HAS_PYGAME:
             springbot.draw(screen, ticks, extrainfo="evolving for height")
             pygame.display.flip()   # Show display
@@ -225,7 +225,7 @@ def swim(springbot, width, height, enable_graphics=False, simulation_time=1500):
 
     # Starts the simulation
     angle = 0.0
-    for i in xrange(simulation_time):
+    for i in range(simulation_time):
         if enable_graphics and HAS_PYGAME:
             springbot.draw(screen, ticks, track_x=True, track_y=True,
             backgroundcolor=(0,10,20), extrainfo="evolving for swim")
