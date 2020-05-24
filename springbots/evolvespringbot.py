@@ -3,12 +3,12 @@ Springbot evolution extension.
 Implements genetic operations like mutation and crossover
 """
 
-from springbot import Springbot
-from gear import Node, Spring
+from .springbot import Springbot
+from .gear import Node, Spring
 from random import choice, uniform, randint
-from latimname import latimname
+from .latimname import latimname
 from math import sqrt, pi
-from vector import Vector
+from .vector import Vector
 from copy import copy
 
 #: Keep track of the bloodline id being generated
@@ -77,8 +77,8 @@ class EvolveSpringbot(Springbot):
             pass
 
         # For each spring in self and other
-        for springA, springB in zip(self.springs + ([None] * ((len(other.springs)-len(self.springs))/2)),
-                                    other.springs + ([None] * ((len(self.springs)-len(other.springs))/2))):
+        for springA, springB in zip(self.springs + ([None] * ((len(other.springs)-len(self.springs))//2)),
+                                    other.springs + ([None] * ((len(self.springs)-len(other.springs))//2))):
 
             if springA is None: springA = springB
             elif springB is None: springB = springA
@@ -142,7 +142,7 @@ class EvolveSpringbot(Springbot):
             return
 
         # Sorteia
-        tipo = choice(range(6))
+        tipo = choice(list(range(6)))
 
         if tipo == 0: # 0 - Adicao de node
             neigh = choice(self.nodes)
@@ -224,14 +224,14 @@ def random_springbot(nodes_num=10, springs_num=30, noderadius=100):
     springbot = EvolveSpringbot(name=latimname(5))
     springbot["adapted"] = "random"
 
-    for x in xrange(randint(nodes_num/2, nodes_num)):
+    for x in range(randint(nodes_num//2, nodes_num)):
         # Adiciona um node
         newnode = Node(pos=(uniform(-noderadius, noderadius),
                 uniform(-noderadius, noderadius)))
         springbot.add(newnode)  # Adiciona novo node
 
     if len(springbot.nodes) > 1:
-        for x in xrange(randint(springs_num/2, springs_num)):
+        for x in range(randint(springs_num//2, springs_num)):
             # Adiciona uma spring aleatoria
             a = choice(springbot.nodes)
             b = choice(springbot.nodes)

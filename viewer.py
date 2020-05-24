@@ -50,7 +50,7 @@ if __name__ == "__main__":
         springbot.centerGround(HEIGHT)
     else:
         for node in springbot.nodes:
-            node.pos.y += (HEIGHT/2)
+            node.pos.y += (HEIGHT//2)
 
     screen = pygame.display.get_surface()
 

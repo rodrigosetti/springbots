@@ -1,14 +1,14 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtWidgets, QtCore
 from math import pi, sin
 import mainwindow, space
 
-class Senoide(QtGui.QWidget):
+class Senoide(QtWidgets.QWidget):
 
     #
     # Construtor
     #
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setMouseTracking(True)
         self.setAutoFillBackground(False)
 
@@ -29,7 +29,7 @@ class Senoide(QtGui.QWidget):
         paint.drawRect(0, 0, width, height)
 
         paint.setBrush(QtGui.QColor(0, 0, 10))
-        paint.drawRect(width/6, 0, width*4/6, height)
+        paint.drawRect(width//6, 0, width*4//6, height)
         pen = QtGui.QPen()
 
         # Desenha linha media
@@ -37,7 +37,7 @@ class Senoide(QtGui.QWidget):
         pen.setWidth(4)
         paint.setPen(pen)
 
-        paint.drawLine(width/2, 0, width/2, height)
+        paint.drawLine(width//2, 0, width//2, height)
 
         if space.selected_springbot:
             # Desenha marcadores de springs
@@ -45,24 +45,24 @@ class Senoide(QtGui.QWidget):
             pen.setWidth(3)
             paint.setPen(pen)
             for spring in space.selected_springbot.springs:
-                paint.drawLine(0, (2*pi) + (spring.offset*height/(2*pi)), width, (2*pi) + (spring.offset*height/(2*pi)))
-                paint.drawEllipse((width/2) + (spring.amplitude*(width/2)) - 4, (2*pi) + (spring.offset*height/(2*pi)) - 4, 8, 8)
+                paint.drawLine(0, int((2*pi) + (spring.offset*height/(2*pi))), width, int((2*pi) + (spring.offset*height/(2*pi))))
+                paint.drawEllipse(int((width/2) + (spring.amplitude*(width/2)) - 4), int((2*pi) + (spring.offset*height/(2*pi)) - 4), 8, 8)
 
             if space.selected_spring:
                 pen.setColor(QtGui.QColor(100, 100, 0))
                 paint.setPen(pen)
-                paint.drawLine(0, (2*pi) + (space.selected_spring.offset*height/(2*pi)),
-                width, (2*pi) + (space.selected_spring.offset*height/(2*pi)))
-                paint.drawEllipse((width/2) + (space.selected_spring.amplitude*(width/2)) - 4,
-                (2*pi) + (space.selected_spring.offset*height/(2*pi)) - 4, 8, 8)
+                paint.drawLine(0, int((2*pi) + (space.selected_spring.offset*height/(2*pi))),
+                width, int((2*pi) + (space.selected_spring.offset*height/(2*pi))))
+                paint.drawEllipse(int((width/2) + (space.selected_spring.amplitude*(width/2)) - 4),
+                int((2*pi) + (space.selected_spring.offset*height/(2*pi)) - 4), 8, 8)
 
             if space.focus_spring and space.focus_spring.parent is space.selected_springbot:
                 pen.setColor(QtGui.QColor(50, 100, 0))
                 paint.setPen(pen)
-                paint.drawLine(0, (2*pi) + (space.focus_spring.offset*height/(2*pi)),
-                width, (2*pi) + (space.focus_spring.offset*height/(2*pi)))
-                paint.drawEllipse((width/2) + (space.focus_spring.amplitude*(width/2)) - 4,
-                (2*pi) + (space.focus_spring.offset*height/(2*pi)) - 4, 8, 8)
+                paint.drawLine(0, int((2*pi) + (space.focus_spring.offset*height/(2*pi))),
+                width, int((2*pi) + (space.focus_spring.offset*height/(2*pi))))
+                paint.drawEllipse(int((width/2) + (space.focus_spring.amplitude*(width/2)) - 4),
+                int((2*pi) + (space.focus_spring.offset*height/(2*pi)) - 4), 8, 8)
 
 
             # Desenha seno
@@ -70,11 +70,11 @@ class Senoide(QtGui.QWidget):
             pen.setWidth(2)
             paint.setPen(pen)
 
-            x = (width/2) + sin(space.selected_springbot['angle'])*(width/3)
+            x = int((width/2) + sin(space.selected_springbot['angle'])*(width/3))
             y = 0
-            for i in xrange(0,height,10):
-                paint.drawLine(x, y, (width/2) + (sin((i*pi*2/height)+space.selected_springbot['angle'])*(width/3)), i)
-                x = (width/2) + (sin((i*pi*2/height)+space.selected_springbot['angle'])*(width/3))
+            for i in range(0,height,10):
+                paint.drawLine(x, y, int((width/2) + (sin((i*pi*2/height)+space.selected_springbot['angle'])*(width/3))), i)
+                x = int((width/2) + (sin((i*pi*2/height)+space.selected_springbot['angle'])*(width/3)))
                 y = i
 
         paint.end()
@@ -91,10 +91,10 @@ class Senoide(QtGui.QWidget):
             # Verifica tamanho
             width, height = self.size().width(), self.size().height()
 
-            if event.x() < width/6.0:
-                x = width/6.0
-            elif event.x() > width*5.0/6.0:
-                x = width*5.0/6.0
+            if event.x() < width//6.0:
+                x = width//6.0
+            elif event.x() > width*5.0//6.0:
+                x = width*5.0//6.0
             else:
                 x = float(event.x())
 
@@ -119,10 +119,10 @@ class Senoide(QtGui.QWidget):
 
             if space.selected_spring and event.buttons() == QtCore.Qt.LeftButton:
 
-                if event.x() < width/6.0:
-                    x = width/6.0
-                elif event.x() > width*5.0/6.0:
-                    x = width*5.0/6.0
+                if event.x() < width//6.0:
+                    x = width//6.0
+                elif event.x() > width*5.0//6.0:
+                    x = width*5.0//6.0
                 else:
                     x = float(event.x())
 

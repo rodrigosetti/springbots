@@ -2,7 +2,6 @@
 This module has a function to generate a latim like name, but not latim at all
 """
 
-from string import upper
 from random import choice
 
 #: Latim vogals sylabes
@@ -23,7 +22,7 @@ def latimname(sil=5):
     """
     word = ''
     vog = choice([True, False])
-    for x in xrange(sil-1):
+    for x in range(sil-1):
         word += choice(VOG) if vog else choice(CONS+MIDCONS if x>0 else CONS)
         vog = not vog
 
@@ -32,4 +31,4 @@ def latimname(sil=5):
 
     word += choice(TERM) if choice([True, False]) else choice(VOG)
 
-    return upper(word[0]) + word[1:]
+    return word[0].upper() + word[1:]

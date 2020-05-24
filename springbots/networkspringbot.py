@@ -5,8 +5,8 @@ network by translating(two ways) the object itself to a simpler
 structure based on dictionary and tuples.
 """
 
-from springbot import Springbot
-from gear import Spring, Node
+from .springbot import Springbot
+from .gear import Spring, Node
 import exceptions
 
 #
@@ -23,7 +23,7 @@ class NetworkSpringbot(Springbot):
         Transforms the springbot into a dictionary
         """
         springbot_d = {}
-        for key, value in self._info.iteritems():
+        for key, value in self._info.items():
             springbot_d[key] = value
 
         springbot_d['nodes'] = tuple({'id': node.id,

@@ -22,9 +22,6 @@ from springbots import fitness
 # To sample from the population
 from random import sample
 
-# To lowercase strings
-from string import lower
-
 try:
     import pygame
     HAS_PYGAME = True
@@ -65,12 +62,10 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
     randoms = int(len(population)/2 * random_insert)
 
     if verbose:
-        print "# Initiating simulation with a population of %d specimens." % (len(population))
-        print "# Evolving for %s:" % (fitness.__name__)
-        print "# At each iteration %d will be discarded, %d of the remaining will" % (
-            discarded, discarded-randoms),
-        print " be selected cloned and mutated and %d random springbots will be inserted" % (
-            randoms)
+        print("# Initiating simulation with a population of %d specimens." % (len(population)))
+        print("# Evolving for %s:" % (fitness.__name__))
+        print("# At each iteration %d will be discarded, %d of the remaining will" % (discarded, discarded-randoms), end=' ')
+        print(" be selected cloned and mutated and %d random springbots will be inserted" % (randoms))
 
     # Transforms population into evolvespringbots
     population = [EvolveSpringbot(springbot) for springbot in population]
@@ -80,7 +75,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
         while population and iter != limit:
 
             if verbose:
-                print "Iteration %d:" % (iter)
+                print("Iteration %d:" % (iter))
                 z = 1
                 fitness_sum = 0
                 bloodline_len_sum = 0
@@ -90,23 +85,23 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 specimen['fitness'] = fitness(specimen, WIDTH, HEIGHT, graphics)
 
                 if verbose:
-                    print "\t%d/%d: \"%s\"(%d) %.3f" % \
+                    print("\t%d/%d: \"%s\"(%d) %.3f" % \
                             (z, len(population), specimen['name'],
-                            specimen.generations(), specimen['fitness'])
+                            specimen.generations(), specimen['fitness']))
                     z += 1
                     bloodline_len_sum += specimen.generations()
                     fitness_sum += specimen['fitness']
 
             if verbose:
-                print "Bloodline lenght average: %.4f" % (bloodline_len_sum/float(len(population)))
-                print "Fitness average: %.4f" % (fitness_sum/float(len(population)))
+                print("Bloodline lenght average: %.4f" % (bloodline_len_sum/float(len(population))))
+                print("Fitness average: %.4f" % (fitness_sum/float(len(population))))
 
             # Now Order population by its fitness
             population.sort(
                 cmp=lambda A,B: cmp(A['fitness'], B['fitness']), reverse=True)
 
             # Discards some of the worse half
-            for specimen in sample(population[len(population)/2:], discarded + randoms):
+            for specimen in sample(population[len(population)//2:], discarded + randoms):
                 population.remove(specimen)
 
             # Clones and mutates some of the remaining
@@ -128,7 +123,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 population.append(child)
 
             # Incorporate randoms
-            population += [EvolveSpringbot(random=True) for x in xrange(randoms)]
+            population += [EvolveSpringbot(random=True) for x in range(randoms)]
 
             # Test if it is time to save population
             if iter % save_freq == 0:
@@ -137,7 +132,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 store_xml(population, filename)
 
                 if verbose:
-                    print "# iteration %d saved into %s" % (iter, filename)
+                    print("# iteration %d saved into %s" % (iter, filename))
 
             # Saves best if asked
             if best:
@@ -145,7 +140,7 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
                 store_xml(population[:1], filename)
 
                 if verbose:
-                    print "# Best of iteration %d saved into %s" % (iter, filename)
+                    print("# Best of iteration %d saved into %s" % (iter, filename))
 
             # Increments iteration
             iter += 1
@@ -154,15 +149,16 @@ def serial_evolve(population, fitness=fitness.walk, save_freq=100,
         pass
 
     # Order population by its fitness
-    population.sort(reverse=True)
+    population.sort(
+        cmp=lambda A,B: cmp(A['fitness'], B['fitness']), reverse=True)
 
     # Now, saves the current population and quit
     filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness.__name__, len(population), iter)
     store_xml(population, filename)
     if verbose:
-        print
-        print "# iteration %d saved into %s" % (iter, filename)
-        print "# terminating..."
+        print()
+        print("# iteration %d saved into %s" % (iter, filename))
+        print("# terminating...")
 
 #
 # If this module its being running as main, execute main thread
@@ -204,8 +200,8 @@ if __name__ == "__main__":
     options.limit = int(options.limit)
     options.start_at = int(options.start_at)
 
-    options.prefix = options.prefix if options.prefix is not None else lower(latimname(3))
-    if options.verbose: print "# %s experiment." % options.prefix
+    options.prefix = options.prefix if options.prefix is not None else latimname(3).lower()
+    if options.verbose: print("# %s experiment." % options.prefix)
 
     if len(args) == 0:
         readfile = sys.stdin

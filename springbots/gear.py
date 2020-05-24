@@ -5,7 +5,7 @@ among those parts.
 """
 
 from math import sqrt, pi, sin, log
-from vector import Vector
+from .vector import Vector
 
 #
 # Constants
@@ -69,7 +69,7 @@ class Node(object):
         """
         self.pos = self.pos + self.vel
         self.vel = self.vel + (self.acc * elast)
-        self.pos = self.pos + (self.acc * (1.0 - elast))
+        self.pos = self.pos + self.acc * (1.0 - elast)
         self.acc = Vector(0,0)
 
         self.vel = self.vel + Vector(grav[0], grav[1])
@@ -175,8 +175,8 @@ class Spring(object):
         N = self.normal + (sin(ang+self.offset) * ampl * self.normal)
 
         if dist != 0:
-            self.a.acc += (delta/dist * (N-dist) * (1.0-elast) * 0.5)
-            self.b.acc -= (delta/dist * (N-dist) * (1.0-elast) * 0.5)
+            self.a.acc += delta/dist * (N-dist) * (1.0-elast) * 0.5
+            self.b.acc -= delta/dist * (N-dist) * (1.0-elast) * 0.5
 
         # Aplica empuxo de fluido
         if visc > 0:
@@ -191,3 +191,6 @@ class Spring(object):
 
     def __repr__(self):
         return "<Spring normal=%.2f, amplitude=%.2f>" % (self.normal, self.amplitude)
+
+if __name__ == '__main__':
+    import unittest

@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtGui, QtWidgets, QtCore
 from ui_mainwindow import Ui_MainWindow
 from ui_aboutdialog import Ui_Dialog
 
@@ -23,7 +23,7 @@ show_names = False
 # Lista de springbots
 springbots = []
 
-class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     #
     # Constroi janela principal do programa
@@ -31,35 +31,35 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         global springbot
 
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
 
     # Set up the user interface from Designer.
         self.setupUi(self)
 
         # Cria objeto about dialog
-        self.aboutDialog = QtGui.QDialog()
+        self.aboutDialog = QtWidgets.QDialog()
         ui = Ui_Dialog()
         ui.setupUi(self.aboutDialog)
 
         # Cria timer e seta os slots
         self.timer = QtCore.QTimer(self)
-        QtCore.QObject.connect(self.timer,  QtCore.SIGNAL("timeout()"), self.space.refresh)
-        QtCore.QObject.connect(self.timer,  QtCore.SIGNAL("timeout()"), self.senoide, QtCore.SLOT("update()"))
-        QtCore.QObject.connect(self.timer,  QtCore.SIGNAL("timeout()"), self.space, QtCore.SLOT("update()"))
+        self.timer.timeout.connect(self.space.refresh)
+        self.timer.timeout.connect(self.senoide.update)
+        self.timer.timeout.connect(self.space.update)
 
         # Conecta as acoes com os metodos
-        QtCore.QObject.connect(self.toggleGravityAct, QtCore.SIGNAL("toggled(bool)"), self.toggleGravity)
-        QtCore.QObject.connect(self.toggleEditModeAct, QtCore.SIGNAL("toggled(bool)"), self.toggleEditMode)
-        QtCore.QObject.connect(self.killSpringbotAct, QtCore.SIGNAL("triggered(bool)"), self.killSpringbot)
-        QtCore.QObject.connect(self.loadSpringbotsAct, QtCore.SIGNAL("triggered(bool)"), self.loadSpringbots)
-        QtCore.QObject.connect(self.saveSpringbotsAct, QtCore.SIGNAL("triggered(bool)"), self.saveSpringbots)
-        QtCore.QObject.connect(self.changeNameAct, QtCore.SIGNAL("triggered(bool)"), self.changeName)
-        QtCore.QObject.connect(self.mutateAct, QtCore.SIGNAL("triggered(bool)"), self.mutate)
-        QtCore.QObject.connect(self.newRandomAct, QtCore.SIGNAL("triggered(bool)"), self.newRandom)
-        QtCore.QObject.connect(self.showMassCenterAct, QtCore.SIGNAL("toggled(bool)"), self.showMassCenter)
-        QtCore.QObject.connect(self.showNamesAct, QtCore.SIGNAL("toggled(bool)"), self.showNames)
-        QtCore.QObject.connect(self.aboutAct, QtCore.SIGNAL("triggered(bool)"), self.about)
-        QtCore.QObject.connect(self.crossoverAct, QtCore.SIGNAL("triggered(bool)"), self.crossover)
+        self.toggleGravityAct.toggled.connect(self.toggleGravity)
+        self.toggleEditModeAct.toggled.connect(self.toggleEditMode)
+        self.killSpringbotAct.triggered.connect(self.killSpringbot)
+        self.loadSpringbotsAct.triggered.connect(self.loadSpringbots)
+        self.saveSpringbotsAct.triggered.connect(self.saveSpringbots)
+        self.changeNameAct.triggered.connect(self.changeName)
+        self.mutateAct.triggered.connect(self.mutate)
+        self.newRandomAct.triggered.connect(self.newRandom)
+        self.showMassCenterAct.toggled.connect(self.showMassCenter)
+        self.showNamesAct.toggled.connect(self.showNames)
+        self.aboutAct.triggered.connect(self.about)
+        self.crossoverAct.triggered.connect(self.crossover)
 
         self.timer.start(30)
 
@@ -71,7 +71,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         global springbots
 
         if len(springbots) < 2:
-            QtGui.QMessageBox.warning(self, 'The number os springbots in the space must be equal or greater than two')
+            QtWidgets.QMessageBox.warning(self, 'Crossover', 'The number of springbots in the space must be equal or greater than two')
         else:
 
             # Pega tamanho da tela
@@ -131,8 +131,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             space.selected_springbot =  random.choice(springbots) if springbots else None
 
         else:
-            QtGui.QMessageBox.warning(self, 'Kill Springbot',
-                                      "Please select a Springbots to kill.", QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Kill Springbot',
+                                      "Please select a Springbots to kill.", QtWidgets.QMessageBox.Ok)
 
 
     #
@@ -148,8 +148,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if ok:
                 space.selected_springbot.name = text
         else:
-            QtGui.QMessageBox.warning(self, 'Change name',
-                                      "Please select a Springbots first.", QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Change name',
+                                      "Please select a Springbots first.", QtWidgets.QMessageBox.Ok)
     #
     # Carrega Springbots
     #
@@ -195,8 +195,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if filename:
                 store_xml(springbots, filename)
         else:
-            QtGui.QMessageBox.warning(self, 'Save springbots',
-                                      "There are no Springbots to save.", QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Save springbots',
+                                      "There are no Springbots to save.", QtWidgets.QMessageBox.Ok)
 
     #
     # Add New Random
@@ -231,8 +231,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             space.selected_springbot.mutate()
 
         else:
-            QtGui.QMessageBox.warning(self, 'Mutate Springbot',
-                                      "Please select a Springbot to mutate.", QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Mutate Springbot',
+                                      "Please select a Springbot to mutate.", QtWidgets.QMessageBox.Ok)
 
     #
     # About

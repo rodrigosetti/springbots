@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
         # Writes springbot structure to output
         writefile.write("<!-- ")
-        for key, value in springbot._info.iteritems():
+        for key, value in springbot._info.items():
             writefile.write('%s="%s" ' % (key, str(value)))
         writefile.write("-->\n")
 

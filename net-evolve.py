@@ -19,7 +19,7 @@ from springbots.latimname import latimname
 import sys, optparse
 
 # To call remote xmlrpc servers
-import xmlrpclib
+import xmlrpc.client
 
 # To sample from the population
 from random import sample
@@ -65,9 +65,9 @@ def load_servers():
     global servers, servers_lock, serverslist
 
     # Reads fitness servers
-    servers = [xmlrpclib.ServerProxy(strip(l)) for l in open(serverslist, 'r')
+    servers = [xmlrpc.client.ServerProxy(strip(l)) for l in open(serverslist, 'r')
                if len(strip(l)) > 0 and strip(l)[0] != '#']
-    servers_lock = [0 for x in xrange(len(servers))]
+    servers_lock = [0 for x in range(len(servers))]
 
 
 #                                                                              #
@@ -94,7 +94,7 @@ class FitnessThread(Thread):
         while True:
             try:
                 # Get the less used server at the moment
-                server_index = min(xrange(len(servers_lock)), key=servers_lock.__getitem__)
+                server_index = min(range(len(servers_lock)), key=servers_lock.__getitem__)
 
                 # Get the server object
                 server = servers[server_index]
@@ -115,7 +115,7 @@ class FitnessThread(Thread):
                 break
             except socket.error:
                 warn("Connection refused at server %s\n" % (str(server)))
-            except xmlrpclib.Error, err:
+            except xmlrpc.client.Error as err:
                 warn("Error at server %s: %s\n" % (str(server), str(err)))
 
         if not servers:
@@ -149,12 +149,12 @@ def network_evolve(save_freq=100, limit=-1,
     randoms = int(len(population)/2 * random_insert)
 
     if verbose:
-        print "# Initiating simulation with a population of %d specimens..." % (len(population))
-        print "# Evolving for %s:" % (fitness_function)
-        print "# At each iteration %d will be discarded, %d of the remaining will" % (
-            discarded, discarded-randoms),
-        print " be selected cloned and mutated and %d random springbots will be inserted" % (
-            randoms)
+        print("# Initiating simulation with a population of %d specimens..." % (len(population)))
+        print("# Evolving for %s:" % (fitness_function))
+        print("# At each iteration %d will be discarded, %d of the remaining will" % (
+            discarded, discarded-randoms), end=' ')
+        print(" be selected cloned and mutated and %d random springbots will be inserted" % (
+            randoms))
 
     # Turn all population into NetworkEvolveSpringbot
     population = [NetworkEvolveSpringbot(springbot) for springbot in population]
@@ -169,12 +169,12 @@ def network_evolve(save_freq=100, limit=-1,
             load_servers()
 
             if verbose:
-                print "Iteration %d:" % (iteration)
+                print("Iteration %d:" % (iteration))
                 fitness_sum = 0
                 bloodline_len_sum = 0
 
             # Create threads
-            threads = [FitnessThread(i) for i in xrange(len(population))]
+            threads = [FitnessThread(i) for i in range(len(population))]
 
             # Start all threads
             for thread in threads:
@@ -186,22 +186,22 @@ def network_evolve(save_freq=100, limit=-1,
 
                 if verbose:
                     specimen = population[thread.index]
-                    print "\t%d/%d: \"%s\"(%d) %.3f" % \
+                    print("\t%d/%d: \"%s\"(%d) %.3f" % \
                     (thread.index+1, len(population), specimen['name'],
-                    specimen.generations(), specimen['fitness'])
+                    specimen.generations(), specimen['fitness']))
                     bloodline_len_sum +=specimen.generations()
                     fitness_sum += specimen['fitness']
 
             if verbose:
-                print "Bloodline lenght average: %.4f" % (bloodline_len_sum/float(len(population)))
-                print "Fitness average: %.4f" % (fitness_sum/float(len(population)))
+                print("Bloodline lenght average: %.4f" % (bloodline_len_sum/float(len(population))))
+                print("Fitness average: %.4f" % (fitness_sum/float(len(population))))
 
             # Now Order population by its fitness
             population.sort(
                 cmp=lambda A,B: cmp(A['fitness'], B['fitness']), reverse=True)
 
             # Discards some of the worse half
-            for specimen in sample(population[len(population)/2:], discarded + randoms):
+            for specimen in sample(population[len(population)//2:], discarded + randoms):
                 population.remove(specimen)
 
             # Clones and mutates some of the remaining half
@@ -222,7 +222,7 @@ def network_evolve(save_freq=100, limit=-1,
                 population.append(child)
 
             # Incorporate randoms
-            population += [NetworkEvolveSpringbot(random=True) for x in xrange(randoms)]
+            population += [NetworkEvolveSpringbot(random=True) for x in range(randoms)]
 
             # Test if it is time to save population
             if iteration % save_freq == 0:
@@ -231,7 +231,7 @@ def network_evolve(save_freq=100, limit=-1,
                 store_xml(population, filename)
 
                 if verbose:
-                    print "# iteration %d saved into %s" % (iteration, filename)
+                    print("# iteration %d saved into %s" % (iteration, filename))
 
             # Saves best if asked
             if best:
@@ -239,7 +239,7 @@ def network_evolve(save_freq=100, limit=-1,
                 store_xml(population[:1], filename)
 
                 if verbose:
-                    print "# Best of iteration %d saved into %s" % (iteration, filename)
+                    print("# Best of iteration %d saved into %s" % (iteration, filename))
 
             # Increments iteration
             iteration += 1
@@ -247,7 +247,7 @@ def network_evolve(save_freq=100, limit=-1,
     except KeyboardInterrupt:
         pass
     if verbose:
-        print "# waiting for threads..."
+        print("# waiting for threads...")
 
     # Join(waits) all threads
     for thread in threads:
@@ -260,9 +260,9 @@ def network_evolve(save_freq=100, limit=-1,
     filename = "%s-%s-p%d-i%d.xml" % (prefix, fitness_function, len(population), iteration)
     store_xml(population, filename)
     if verbose:
-        print
-        print "# iteration %d saved into %s" % (iteration, filename)
-        print "# terminating..."
+        print()
+        print("# iteration %d saved into %s" % (iteration, filename))
+        print("# terminating...")
 
 #
 # If this module its being running as main, execute main thread
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     options.start_at = int(options.start_at)
 
     options.prefix = options.prefix if options.prefix is not None else lower(latimname(3))
-    if options.verbose: print "# %s experiment." % options.prefix
+    if options.verbose: print("# %s experiment." % options.prefix)
 
     if len(args) == 0:
         readfile = sys.stdin
